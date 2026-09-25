@@ -20,12 +20,12 @@ public class State : IState
     public virtual void Enter()
     {
         EnableAllLinks();
-        enter();
+        enter?.Invoke();
     }
 
     public virtual void Exit()
     {
-        exit();
+        exit?.Invoke();
         DisableAllLinks();
     }
 
