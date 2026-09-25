@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,6 +13,7 @@ public class CameraControl : MonoBehaviour
     Mode mode;
     PlayerControl playerControl;
     Transform pivotTransform;
+    SphereCollider cameraCollider;
     Vector3 offset = new Vector3(0, 2, -4);
     float zoomScale = 1f;
     float zoomSpeed = 0.1f;
@@ -23,9 +25,12 @@ public class CameraControl : MonoBehaviour
 
     private void Start()
     {
-        mode = Mode.FirstPerson;
         playerControl = GetComponentInParent<PlayerControl>();
+        cameraCollider = GetComponentInChildren<SphereCollider>();
         pivotTransform = transform.parent;
+
+        Physics.IgnoreCollision(cameraCollider, playerControl.GetComponent<Collider>(), true);
+        SwitchToFirstPerson();
 
         switchViewAction = new InputAction(binding: "<Keyboard>/leftShift");
         switchViewAction.performed += OnSwitchView;
@@ -45,6 +50,69 @@ public class CameraControl : MonoBehaviour
         else
         {
             pivotTransform.localRotation = Quaternion.Euler(playerControl.Pitch, 0f, 0f);
+            transform.localPosition = offset * zoomScale;
+            FixCameraGround();
+        }
+    }
+
+    private void SwitchToFirstPerson()
+    {
+        pivotTransform.localRotation = Quaternion.identity;
+        transform.localPosition = Vector3.zero;
+        cameraCollider.enabled = false;
+        mode = Mode.FirstPerson;
+    }
+
+    private void SwitchToThirdPerson()
+    {
+        transform.localRotation = Quaternion.identity;
+        cameraCollider.enabled = true;
+        mode = Mode.ThirdPerson;
+    }
+
+    private void FixCameraGround()
+    {
+        if (mode != Mode.ThirdPerson)
+            return;
+
+        Vector3 worldOffset = pivotTransform.rotation * offset;
+        float desiredDistance = offset.magnitude * zoomScale;
+
+        if (worldOffset.y < 0)
+        {
+            float groundLimitedScale = -pivotTransform.position.y / worldOffset.y;
+            desiredDistance = Mathf.Min(desiredDistance, groundLimitedScale * offset.magnitude);
+        }
+
+        zoomScale = desiredDistance / offset.magnitude;
+        if (zoomScale < minZoomScale)
+        {
+            zoomScale = 1;
+            SwitchToFirstPerson();
+        }
+    }
+
+    private void FixCameraWall()
+    {
+        if (mode != Mode.ThirdPerson)
+            return;
+
+        Vector3 worldOffset = pivotTransform.rotation * offset;
+        float desiredDistance = offset.magnitude * zoomScale;
+
+        RaycastHit[] hits = Physics.SphereCastAll(pivotTransform.position, cameraCollider.radius, worldOffset.normalized, desiredDistance);
+        foreach (RaycastHit hit in hits)
+        {
+            if (!hit.collider.CompareTag("Wall"))
+                continue;
+            desiredDistance = Mathf.Min(desiredDistance, Mathf.Max(0, hit.distance - 1));
+        }
+
+        zoomScale = desiredDistance / offset.magnitude;
+        if (zoomScale < minZoomScale)
+        {
+            zoomScale = 1;
+            SwitchToFirstPerson();
         }
     }
 
@@ -60,27 +128,28 @@ public class CameraControl : MonoBehaviour
     private void OnSwitchView(InputAction.CallbackContext context)
     {
         if (mode == Mode.FirstPerson)
-        {
-            transform.localRotation = Quaternion.identity;
-            transform.localPosition = offset * zoomScale;
-            mode = Mode.ThirdPerson;
-        }
+            SwitchToThirdPerson();
         else
-        {
-            pivotTransform.localRotation = Quaternion.identity;
-            transform.localPosition = Vector3.zero;
-            mode = Mode.FirstPerson;
-        }
+            SwitchToFirstPerson();
     }
 
     private void OnZoom(InputAction.CallbackContext context)
     {
+        if (mode != Mode.ThirdPerson)
+            return;
+
         float scroll = context.ReadValue<float>();
         zoomScale = Mathf.Clamp(zoomScale - scroll * zoomSpeed, minZoomScale, maxZoomScale);
 
-        if (mode == Mode.ThirdPerson)
-        {
-            transform.localPosition = offset * zoomScale;
-        }
+        FixCameraGround();
+        FixCameraWall();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("Wall"))
+            return;
+
+        FixCameraWall();
     }
 }
