@@ -42,7 +42,7 @@ public class SequenceManager : MonoBehaviour
     private void SetStates()
     {
         launchState = new State(enter: EnterLaunch);
-        gameplayState = new State(enter: EnterGameplay, exit: ExitGameplay);
+        gameplayState = new State(enter: EnterGameplay);
         exitState = new State(enter: ExitApp);
     }
 
@@ -53,6 +53,7 @@ public class SequenceManager : MonoBehaviour
             Subscribe = handler => SequenceEvents.StartGameplay += handler,
             Unsubscribe = handler => SequenceEvents.StartGameplay -= handler
         };
+
 
         EventWrapper ExitApplication = new EventWrapper
         {
@@ -72,16 +73,26 @@ public class SequenceManager : MonoBehaviour
 
     private void EnterGameplay()
     {
+        SceneManager.sceneLoaded += OnGameplaySceneLoaded;
         SceneManager.LoadScene(GameplaySceneName, LoadSceneMode.Single);
     }
 
-    private void ExitGameplay()
+    private void OnGameplaySceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        SceneManager.sceneLoaded -= OnGameplaySceneLoaded;
 
+        GameplayManager gameplayManager = FindFirstObjectByType<GameplayManager>();
+        gameplayManager.Init();
+        gameplayManager.Run();
     }
 
     private void ExitApp()
     {
-
+        Debug.Log("Exit App");
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }
