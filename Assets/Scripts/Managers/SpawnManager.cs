@@ -3,17 +3,19 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    const float MAX_X = 100;
-    const float MIN_X = -100;
-    const float MAX_Z = 100;
-    const float MIN_Z = -100;
+    const float WALL_MAX_X = 100;
+    const float WALL_MIN_X = -100;
+    const float WALL_MAX_Z = 100;
+    const float WALL_MIN_Z = -100;
+    const float PLATFORM_MAX_X = 5;
+    const float PLATFORM_MIN_X = -5;
+    const float PLATFORM_MAX_Z = 5;
+    const float PLATFORM_MIN_Z = -5;
 
     GameObject[] obstaclePrefabs;
     GameObject[] targetPrefabs;
     List<Obstacle> obstacles;
     List<Target> targets;
-
-    float wallMargin = 2;
 
     public void Init()
     {
@@ -100,11 +102,22 @@ public class SpawnManager : MonoBehaviour
 
     private Vector3 GetRandomPos()
     {
-        return new Vector3(
-            Random.Range(MIN_X + wallMargin, MAX_X - wallMargin),
-            Random.Range(1, 5),
-            Random.Range(MIN_Z + wallMargin, MAX_Z - wallMargin)
+        float margin = 2;
+        float x, y, z;
+
+        do
+        {
+            x = Random.Range(WALL_MIN_X + margin, WALL_MAX_X - margin);
+            z = Random.Range(WALL_MIN_Z + margin, WALL_MAX_Z - margin);
+        }
+        while (
+            (x > PLATFORM_MIN_X - margin) && (x < PLATFORM_MAX_X + margin) &&
+            (z > PLATFORM_MIN_Z - margin) && (z < PLATFORM_MAX_X + margin)
         );
+
+        y = Random.Range(1, 5);
+
+        return new Vector3(x, y, z);
     }
 
     private Quaternion GetRandomRot()

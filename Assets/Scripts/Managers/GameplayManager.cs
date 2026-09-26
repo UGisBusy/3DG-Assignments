@@ -68,10 +68,10 @@ public class GameplayManager : MonoBehaviour
     private void EnterRunState()
     {
         // TODO
-        int targetAmount = 10;
+        int targetAmount = 200;
         spawnManager.SpawnTargets(targetAmount, out targetAmount);
 
-        int obstacleAmount = 10;
+        int obstacleAmount = 200;
         spawnManager.SpawnObstacles(obstacleAmount, out obstacleAmount);
     }
 
