@@ -8,6 +8,8 @@ public class GameplayManager : MonoBehaviour
     IState runState;
     IState exitState;
 
+    SpawnManager spawnManager;
+
     InputAction proceedStateAction;
 
     public void Init()
@@ -16,6 +18,9 @@ public class GameplayManager : MonoBehaviour
 
         SetStates();
         SetLinks();
+
+        spawnManager = GetComponent<SpawnManager>();
+        spawnManager.Init();
 
         // TODO: testing perpose
         proceedStateAction = new InputAction(binding: "<Keyboard>/l");
@@ -28,10 +33,17 @@ public class GameplayManager : MonoBehaviour
         stateMachine.EnterState(restState);
     }
 
+    private void OnDestroy()
+    {
+        // TODO: testing perpose
+        proceedStateAction.performed -= OnProceedStatePerformed;
+        proceedStateAction.Disable();
+    }
+
     private void SetStates()
     {
-        restState = new State();
-        runState = new State();
+        restState = new State(enter: EnterRestState);
+        runState = new State(enter: EnterRunState);
         exitState = new State(enter: ExitGameplay);
     }
 
@@ -45,7 +57,7 @@ public class GameplayManager : MonoBehaviour
         };
 
         restState.AddLink(new Link(runState, ProceedStateWrapper));
-        runState.AddLink(new Link(exitState, ProceedStateWrapper));
+        runState.AddLink(new Link(restState, ProceedStateWrapper));
     }
 
     private void ExitGameplay()
@@ -53,11 +65,19 @@ public class GameplayManager : MonoBehaviour
         SequenceEvents.ExitGameplay?.Invoke();
     }
 
-    private void OnDestroy()
+    private void EnterRunState()
     {
-        // TODO: testing perpose
-        proceedStateAction.performed -= OnProceedStatePerformed;
-        proceedStateAction.Disable();
+        // TODO
+        int targetAmount = 10;
+        spawnManager.SpawnTargets(targetAmount, out targetAmount);
+
+        int obstacleAmount = 10;
+        spawnManager.SpawnObstacles(obstacleAmount, out obstacleAmount);
+    }
+
+    private void EnterRestState()
+    {
+        spawnManager.DespawnAll();
     }
 
     private void OnProceedStatePerformed(InputAction.CallbackContext context)
