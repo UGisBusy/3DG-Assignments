@@ -27,18 +27,23 @@ public class PlayerMovement : MonoBehaviour
 
         switchMovementModeAction = new InputAction(binding: "<Keyboard>/space");
         switchMovementModeAction.performed += OnSwitchMode;
-        switchMovementModeAction.Enable();
-
     }
 
     private void OnEnable()
     {
         moveAction.action.Enable();
+        switchMovementModeAction.Enable();
     }
 
     private void OnDisable()
     {
         moveAction.action.Disable();
+        switchMovementModeAction.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        switchMovementModeAction.performed -= OnSwitchMode;
     }
 
     private void FixedUpdate()
