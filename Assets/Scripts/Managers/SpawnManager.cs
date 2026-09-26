@@ -25,10 +25,10 @@ public class SpawnManager : MonoBehaviour
         LoadPrefabs();
     }
 
-    public void SpawnTargets(int amount, out int spawnedAmount)
+    public void SpawnTargets(int count, out int spawnedCount)
     {
-        spawnedAmount = 0;
-        for (int i = 0; i < amount; i++)
+        spawnedCount = 0;
+        for (int i = 0; i < count; i++)
         {
             int pickId = (int)(Random.value * targetPrefabs.Length);
             GameObject obj = Instantiate(targetPrefabs[pickId], GetRandomPos(), GetRandomRot());
@@ -41,7 +41,7 @@ public class SpawnManager : MonoBehaviour
             }
 
             targets.Add(comp);
-            spawnedAmount++;
+            spawnedCount++;
         }
     }
 
@@ -112,7 +112,7 @@ public class SpawnManager : MonoBehaviour
         }
         while (
             (x > PLATFORM_MIN_X - margin) && (x < PLATFORM_MAX_X + margin) &&
-            (z > PLATFORM_MIN_Z - margin) && (z < PLATFORM_MAX_X + margin)
+            (z > PLATFORM_MIN_Z - margin) && (z < PLATFORM_MAX_Z + margin)
         );
 
         y = Random.Range(1, 5);
