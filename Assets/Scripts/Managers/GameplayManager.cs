@@ -3,12 +3,20 @@ using UnityEngine.InputSystem;
 
 public class GameplayManager : MonoBehaviour
 {
+    const int MAX_TOTAL_COUNT = 500;
+    const int MIN_TOTAL_COUNT = 200;
+    const int MIN_TARGET_COUNT = 100;
+    const int MIN_OBSTACLE_COUNT = 100;
+
     StateMachine stateMachine;
     IState restState;
     IState runState;
     IState exitState;
 
     SpawnManager spawnManager;
+
+    int targetCount => spawnManager.TargetCount;
+    int obstacleCount => spawnManager.ObstacleCount;
 
     InputAction proceedStateAction;
 
@@ -67,12 +75,17 @@ public class GameplayManager : MonoBehaviour
 
     private void EnterRunState()
     {
-        // TODO
-        int targetAmount = 200;
-        spawnManager.SpawnTargets(targetAmount, out targetAmount);
+        int totalCountDesired = (int)Random.Range(MIN_TOTAL_COUNT, MAX_TOTAL_COUNT);
+        int targetCountDesired = (int)Random.Range(MIN_TARGET_COUNT, totalCountDesired - MIN_OBSTACLE_COUNT);
+        int obstacleCountDesired = totalCountDesired - targetCountDesired;
 
-        int obstacleAmount = 200;
-        spawnManager.SpawnObstacles(obstacleAmount, out obstacleAmount);
+        int targetCount = 0, obstacleCount = 0;
+
+        while (targetCount < MIN_TARGET_COUNT)
+            spawnManager.SpawnTargets(targetCountDesired, out targetCount);
+
+        while (obstacleCount < MIN_OBSTACLE_COUNT)
+            spawnManager.SpawnObstacles(obstacleCountDesired, out obstacleCount);
     }
 
     private void EnterRestState()

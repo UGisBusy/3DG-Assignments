@@ -12,6 +12,9 @@ public class SpawnManager : MonoBehaviour
     const float PLATFORM_MAX_Z = 5;
     const float PLATFORM_MIN_Z = -5;
 
+    public int ObstacleCount => obstacles != null ? obstacles.Count : 0;
+    public int TargetCount => targets != null ? targets.Count : 0;
+
     GameObject[] obstaclePrefabs;
     GameObject[] targetPrefabs;
     List<Obstacle> obstacles;
