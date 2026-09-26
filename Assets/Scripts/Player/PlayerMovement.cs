@@ -6,15 +6,29 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private InputActionReference moveAction;
 
+    enum Mode
+    {
+        slow,
+        fast
+    }
+    Mode mode;
     float topSpeed = 10f;
     float acceleration = 40f;
     float stopThreshold = 0.15f;
 
     Rigidbody rb;
 
+    InputAction switchMovementModeAction;
+
     private void Start()
     {
+        mode = Mode.slow;
         rb = GetComponent<Rigidbody>();
+
+        switchMovementModeAction = new InputAction(binding: "<Keyboard>/space");
+        switchMovementModeAction.performed += OnSwitchMode;
+        switchMovementModeAction.Enable();
+
     }
 
     private void OnEnable()
@@ -39,12 +53,22 @@ public class PlayerMovement : MonoBehaviour
         Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
         Vector3 inputDirection = forward * nomralizedInput.y + right * nomralizedInput.x;
 
-        Vector3 desiredVelocity = rawInput.magnitude > 0.0001f ? (inputDirection * topSpeed) : Vector3.zero;
-        Vector3 horizontalVelocity = Vector3.MoveTowards(currentHorizontal, desiredVelocity, acceleration * dt);
+        float factor = (mode == Mode.slow) ? 1 : 3;
+
+        Vector3 desiredVelocity = rawInput.magnitude > 0.0001f ? (inputDirection * topSpeed * factor) : Vector3.zero;
+        Vector3 horizontalVelocity = Vector3.MoveTowards(currentHorizontal, desiredVelocity, acceleration * dt * factor);
         if (horizontalVelocity.magnitude < stopThreshold)
             horizontalVelocity = Vector3.zero;
 
         rb.linearVelocity = new Vector3(horizontalVelocity.x, rb.linearVelocity.y, horizontalVelocity.z);
+    }
+
+    private void OnSwitchMode(InputAction.CallbackContext context)
+    {
+        if (mode == Mode.slow)
+            mode = Mode.fast;
+        else
+            mode = Mode.slow;
     }
 }
 
