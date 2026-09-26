@@ -18,7 +18,7 @@ public class GameplayManager : MonoBehaviour
         SetLinks();
 
         // TODO: testing perpose
-        proceedStateAction = new InputAction(binding: "<Keyboard>/space");
+        proceedStateAction = new InputAction(binding: "<Keyboard>/l");
         proceedStateAction.performed += OnProceedStatePerformed;
         proceedStateAction.Enable();
     }
