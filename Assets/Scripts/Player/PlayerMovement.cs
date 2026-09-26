@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CapsuleCollider))]
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private InputActionReference moveAction;
@@ -15,35 +16,55 @@ public class PlayerMovement : MonoBehaviour
     float topSpeed = 10f;
     float acceleration = 40f;
     float stopThreshold = 0.15f;
+    float jumpSpeed = 10f;
+    float groundCheckRadius = 0.2f;
 
     Rigidbody rb;
+    CapsuleCollider capsule;
+
+    public bool IsGrounded { get => CheckGrounded(); }
 
     InputAction switchMovementModeAction;
+    InputAction jumpAction;
 
-    private void Start()
+    private void Awake()
     {
         mode = Mode.slow;
         rb = GetComponent<Rigidbody>();
+        capsule = GetComponent<CapsuleCollider>();
+
+        capsule.material = new PhysicsMaterial
+        {
+            dynamicFriction = 0f,
+            staticFriction = 0f,
+            frictionCombine = PhysicsMaterialCombine.Minimum
+        };
 
         switchMovementModeAction = new InputAction(binding: "<Keyboard>/space");
         switchMovementModeAction.performed += OnSwitchMode;
+
+        jumpAction = new InputAction(binding: "<Keyboard>/f");
+        jumpAction.performed += OnJump;
     }
 
     private void OnEnable()
     {
         moveAction.action.Enable();
         switchMovementModeAction.Enable();
+        jumpAction.Enable();
     }
 
     private void OnDisable()
     {
         moveAction.action.Disable();
         switchMovementModeAction.Disable();
+        jumpAction.Disable();
     }
 
     private void OnDestroy()
     {
         switchMovementModeAction.performed -= OnSwitchMode;
+        jumpAction.performed -= OnJump;
     }
 
     private void FixedUpdate()
@@ -75,5 +96,26 @@ public class PlayerMovement : MonoBehaviour
         else
             mode = Mode.slow;
     }
-}
 
+    private void OnJump(InputAction.CallbackContext context)
+    {
+        if (!IsGrounded)
+            return;
+
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpSpeed, rb.linearVelocity.z);
+    }
+
+    private bool CheckGrounded()
+    {
+        Vector3 feetPosition = capsule.bounds.center - new Vector3(0f, capsule.bounds.extents.y, 0f);
+        Collider[] hits = Physics.OverlapSphere(feetPosition, groundCheckRadius);
+
+        foreach (Collider hit in hits)
+        {
+            if (hit.CompareTag("Ground") || hit.CompareTag("Wall"))
+                return true;
+        }
+
+        return false;
+    }
+}
