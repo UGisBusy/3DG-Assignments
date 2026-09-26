@@ -435,6 +435,7 @@ GameObject:
   - component: {fileID: 1184469256}
   - component: {fileID: 1184469255}
   - component: {fileID: 1184469254}
+  - component: {fileID: 1184469260}
   - component: {fileID: 1184469259}
   m_Layer: 0
   m_Name: Player
@@ -578,6 +579,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa7a43b5a7209d94dae8294ed8173131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerControl
+--- !u!114 &1184469260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184469253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a91418c1f1ef3f46aa971dbde85ad92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  moveAction: {fileID: -7148288282636616792, guid: 8596a5268feb1d145af1e645ee76146c, type: 3}
 --- !u!1 &1211760044
 GameObject:
   m_ObjectHideFlags: 0
