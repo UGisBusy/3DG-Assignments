@@ -71,18 +71,27 @@ public class PlayerControl : MonoBehaviour
             if (hit.collider.CompareTag("Target"))
             {
                 target = hit.collider.GetComponent<Target>();
+                if (target.IsBeingAttack)
+                    continue;
+
                 distance = Vector3.Distance(hit.collider.transform.position, transform.position);
             }
         }
 
         if (target == null)
         {
-            // TODO
-            Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 100, Color.yellow, 5f);
+            // TODO: play error sound
+            // Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 100, Color.yellow, 5f);
             return;
         }
 
+        // Debug.DrawLine(cameraTransform.position, target.transform.position, Color.red, 5f);
+        throwBoomerangAt(target);
+    }
+
+    private void throwBoomerangAt(Target target)
+    {
         // TODO
-        Debug.DrawLine(cameraTransform.position, target.transform.position, Color.red, 5f);
+        target.BeTargeted();
     }
 }
