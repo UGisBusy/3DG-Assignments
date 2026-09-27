@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class GameplayManager : MonoBehaviour
 {
@@ -19,20 +20,12 @@ public class GameplayManager : MonoBehaviour
     int targetCount => spawnManager.TargetCount;
     int obstacleCount => spawnManager.ObstacleCount;
 
-    InputAction proceedStateAction;
-    InputAction exitAction;
-
     public void Init()
     {
         SetStates();
         SetLinks();
 
         spawnManager.Init();
-
-        // TODO: testing perpose
-        proceedStateAction = new InputAction(binding: "<Keyboard>/l");
-        proceedStateAction.performed += OnProceedStatePerformed;
-        proceedStateAction.Enable();
     }
 
     public void Run()
@@ -49,13 +42,6 @@ public class GameplayManager : MonoBehaviour
             throw new System.NullReferenceException("player is null");
     }
 
-    private void OnDestroy()
-    {
-        // TODO: testing perpose
-        proceedStateAction.performed -= OnProceedStatePerformed;
-        proceedStateAction.Disable();
-    }
-
     private void SetStates()
     {
         restState = new State(enter: EnterRestState);
@@ -65,15 +51,15 @@ public class GameplayManager : MonoBehaviour
 
     private void SetLinks()
     {
-        EventWrapper ProceedStateWrapper = new EventWrapper
-        {
+        // TODO
+        InputAction proceedAction = new InputAction(binding: "<Keyboard>/l");
+        InputAction exitAction = new InputAction(binding: "<Keyboard>/escape");
 
-            Subscribe = handler => GameplayEvents.ProceedState += handler,
-            Unsubscribe = handler => GameplayEvents.ProceedState -= handler
-        };
+        restState.AddLink(new InputLink(runState, proceedAction));
+        restState.AddLink(new InputLink(exitState, exitAction));
 
-        restState.AddLink(new Link(runState, ProceedStateWrapper));
-        runState.AddLink(new Link(restState, ProceedStateWrapper));
+        runState.AddLink(new InputLink(restState, proceedAction));
+        runState.AddLink(new InputLink(exitState, exitAction));
     }
 
     private void ExitGameplay()
@@ -110,10 +96,5 @@ public class GameplayManager : MonoBehaviour
 
         while (obstacleCount < MIN_OBSTACLE_COUNT)
             spawnManager.SpawnObstacles(obstacleCountDesired, out obstacleCount);
-    }
-
-    private void OnProceedStatePerformed(InputAction.CallbackContext context)
-    {
-        GameplayEvents.ProceedState?.Invoke();
     }
 }
