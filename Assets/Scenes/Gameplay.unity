@@ -593,6 +593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa7a43b5a7209d94dae8294ed8173131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerControl
+  cameraPivot: {fileID: 1858915344}
 --- !u!114 &1184469260
 MonoBehaviour:
   m_ObjectHideFlags: 0

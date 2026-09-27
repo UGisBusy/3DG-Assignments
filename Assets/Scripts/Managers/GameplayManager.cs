@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 public class GameplayManager : MonoBehaviour
 {
@@ -40,6 +39,8 @@ public class GameplayManager : MonoBehaviour
 
         if (player == null)
             throw new System.NullReferenceException("player is null");
+
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void SetStates()
