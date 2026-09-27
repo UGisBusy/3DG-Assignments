@@ -14,7 +14,7 @@ public class EventWrapper
     public Action<Action> Unsubscribe { get; set; }
 }
 
-// public class ActionWrapper<T>
+// public class EventWrapper<T>
 // {
 //     public Action<Action<T>> Subscribe { get; set; }
 //     public Action<Action<T>> Unsubscribe { get; set; }

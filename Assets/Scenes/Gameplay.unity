@@ -408,6 +408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f38b46c1955bbdf4f97914730ca7e11e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameplayManager
+  player: {fileID: 1184469259}
 --- !u!4 &1016644005
 Transform:
   m_ObjectHideFlags: 0
@@ -592,6 +593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa7a43b5a7209d94dae8294ed8173131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerControl
+  cameraPivot: {fileID: 1858915344}
 --- !u!114 &1184469260
 MonoBehaviour:
   m_ObjectHideFlags: 0

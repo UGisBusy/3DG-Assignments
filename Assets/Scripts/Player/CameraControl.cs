@@ -31,7 +31,7 @@ public class CameraControl : MonoBehaviour
         Physics.IgnoreCollision(cameraCollider, playerControl.GetComponent<Collider>(), true);
         SwitchToFirstPerson();
 
-        switchViewAction = new InputAction(binding: "<Keyboard>/leftShift");
+        switchViewAction = new InputAction(binding: "<Keyboard>/q");
         switchViewAction.performed += OnSwitchView;
         switchViewAction.Enable();
 

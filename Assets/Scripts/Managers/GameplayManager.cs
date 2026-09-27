@@ -8,32 +8,23 @@ public class GameplayManager : MonoBehaviour
     const int MIN_TARGET_COUNT = 100;
     const int MIN_OBSTACLE_COUNT = 100;
 
+    [SerializeField] private PlayerControl player;
+
     StateMachine stateMachine;
     IState restState;
     IState runState;
     IState exitState;
 
     SpawnManager spawnManager;
-
     int targetCount => spawnManager.TargetCount;
     int obstacleCount => spawnManager.ObstacleCount;
 
-    InputAction proceedStateAction;
-
     public void Init()
     {
-        stateMachine = new StateMachine();
-
         SetStates();
         SetLinks();
 
-        spawnManager = GetComponent<SpawnManager>();
         spawnManager.Init();
-
-        // TODO: testing perpose
-        proceedStateAction = new InputAction(binding: "<Keyboard>/l");
-        proceedStateAction.performed += OnProceedStatePerformed;
-        proceedStateAction.Enable();
     }
 
     public void Run()
@@ -41,31 +32,35 @@ public class GameplayManager : MonoBehaviour
         stateMachine.EnterState(restState);
     }
 
-    private void OnDestroy()
+    private void Awake()
     {
-        // TODO: testing perpose
-        proceedStateAction.performed -= OnProceedStatePerformed;
-        proceedStateAction.Disable();
+        stateMachine = new StateMachine();
+        spawnManager = GetComponent<SpawnManager>();
+
+        if (player == null)
+            throw new System.NullReferenceException("player is null");
+
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void SetStates()
     {
         restState = new State(enter: EnterRestState);
-        runState = new State(enter: EnterRunState);
+        runState = new State(enter: EnterRunState, exit: ExitRunstate);
         exitState = new State(enter: ExitGameplay);
     }
 
     private void SetLinks()
     {
-        EventWrapper ProceedStateWrapper = new EventWrapper
-        {
+        // TODO
+        InputAction proceedAction = new InputAction(binding: "<Keyboard>/l");
+        InputAction exitAction = new InputAction(binding: "<Keyboard>/escape");
 
-            Subscribe = handler => GameplayEvents.ProceedState += handler,
-            Unsubscribe = handler => GameplayEvents.ProceedState -= handler
-        };
+        restState.AddLink(new InputLink(runState, proceedAction));
+        restState.AddLink(new InputLink(exitState, exitAction));
 
-        restState.AddLink(new Link(runState, ProceedStateWrapper));
-        runState.AddLink(new Link(restState, ProceedStateWrapper));
+        runState.AddLink(new InputLink(restState, proceedAction));
+        runState.AddLink(new InputLink(exitState, exitAction));
     }
 
     private void ExitGameplay()
@@ -74,6 +69,22 @@ public class GameplayManager : MonoBehaviour
     }
 
     private void EnterRunState()
+    {
+        SpawnAll();
+        player.EnableRayPick();
+    }
+
+    private void ExitRunstate()
+    {
+        player.DisableRayPick();
+    }
+
+    private void EnterRestState()
+    {
+        spawnManager.DespawnAll();
+    }
+
+    private void SpawnAll()
     {
         int totalCountDesired = (int)Random.Range(MIN_TOTAL_COUNT, MAX_TOTAL_COUNT);
         int targetCountDesired = (int)Random.Range(MIN_TARGET_COUNT, totalCountDesired - MIN_OBSTACLE_COUNT);
@@ -86,15 +97,5 @@ public class GameplayManager : MonoBehaviour
 
         while (obstacleCount < MIN_OBSTACLE_COUNT)
             spawnManager.SpawnObstacles(obstacleCountDesired, out obstacleCount);
-    }
-
-    private void EnterRestState()
-    {
-        spawnManager.DespawnAll();
-    }
-
-    private void OnProceedStatePerformed(InputAction.CallbackContext context)
-    {
-        GameplayEvents.ProceedState?.Invoke();
     }
 }
