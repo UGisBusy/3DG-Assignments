@@ -48,22 +48,22 @@ public class SequenceManager : MonoBehaviour
 
     private void SetLinks()
     {
-        EventWrapper StartGameplayWrapper = new EventWrapper
+        EventWrapper startGameplayWrapper = new EventWrapper
         {
             Subscribe = handler => SequenceEvents.StartGameplay += handler,
             Unsubscribe = handler => SequenceEvents.StartGameplay -= handler
         };
 
 
-        EventWrapper ExitApplication = new EventWrapper
+        EventWrapper sxitApplication = new EventWrapper
         {
             Subscribe = handler => SequenceEvents.ExitGameplay += handler,
             Unsubscribe = handler => SequenceEvents.ExitGameplay -= handler
         };
 
-        launchState.AddLink(new Link(gameplayState, StartGameplayWrapper));
+        launchState.AddLink(new Link(gameplayState, startGameplayWrapper));
 
-        gameplayState.AddLink(new Link(exitState, ExitApplication));
+        gameplayState.AddLink(new Link(exitState, sxitApplication));
     }
 
     private void EnterLaunch()

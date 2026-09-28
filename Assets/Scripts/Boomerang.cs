@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 public class Boomerang : MonoBehaviour
 {
     PlayerControl player;

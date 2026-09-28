@@ -10,6 +10,7 @@ public class GameplayManager : MonoBehaviour
 
     [SerializeField] private PlayerControl player;
     [SerializeField] private GameObject boomerangPrefab;
+    [SerializeField] private RestArea restArea;
 
     StateMachine stateMachine;
     IState restState;
@@ -44,6 +45,9 @@ public class GameplayManager : MonoBehaviour
         if (boomerangPrefab == null)
             throw new System.NullReferenceException("boomerangPrefab is null");
 
+        if (restArea == null)
+            throw new System.NullReferenceException("rest area is null");
+
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -56,14 +60,24 @@ public class GameplayManager : MonoBehaviour
 
     private void SetLinks()
     {
-        // TODO
-        InputAction proceedAction = new InputAction(binding: "<Keyboard>/l");
         InputAction exitAction = new InputAction(binding: "<Keyboard>/escape");
 
-        restState.AddLink(new InputLink(runState, proceedAction));
+        EventWrapper enterRunEventWrapper = new EventWrapper
+        {
+            Subscribe = handler => GameplayEvents.EnterRunState += handler,
+            Unsubscribe = handler => GameplayEvents.EnterRunState -= handler
+        };
+
+        EventWrapper enterRestEventWrapper = new EventWrapper
+        {
+            Subscribe = handler => GameplayEvents.EnterRestState += handler,
+            Unsubscribe = handler => GameplayEvents.EnterRestState -= handler
+        };
+
+        restState.AddLink(new Link(runState, enterRunEventWrapper));
         restState.AddLink(new InputLink(exitState, exitAction));
 
-        runState.AddLink(new InputLink(restState, proceedAction));
+        runState.AddLink(new Link(restState, enterRestEventWrapper));
         runState.AddLink(new InputLink(exitState, exitAction));
     }
 
@@ -76,6 +90,7 @@ public class GameplayManager : MonoBehaviour
     {
         SpawnAll();
         player.EnableAttack();
+        restArea.EnableCheckEnter();
         GameplayEvents.PlayerAttack += OnPlayerAttack;
     }
 
@@ -89,6 +104,7 @@ public class GameplayManager : MonoBehaviour
     private void EnterRestState()
     {
         spawnManager.DespawnAll();
+        restArea.EnableCheckExit();
     }
 
     private void SpawnAll()
