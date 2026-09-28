@@ -1,9 +1,12 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerControl : MonoBehaviour
 {
     [SerializeField] private Transform cameraPivot;
+
+    public bool HasBoomerang { get; private set; }
 
     public float Yaw { get; private set; }
     public float Pitch { get; private set; }
@@ -14,14 +17,19 @@ public class PlayerControl : MonoBehaviour
     InputAction rayPickAction;
     private float maxRayDistance = 100f;
 
-    public void EnableRayPick()
+    private float attackCooldown = 2f;
+
+    public void EnableAttack()
     {
+        HasBoomerang = true;
         rayPickAction.Enable();
     }
 
-    public void DisableRayPick()
+    public void DisableAttack()
     {
+        HasBoomerang = false;
         rayPickAction.Disable();
+        StopAllCoroutines();
     }
 
     private void Awake()
@@ -34,7 +42,9 @@ public class PlayerControl : MonoBehaviour
     {
         Yaw = transform.eulerAngles.y;
         rayPickAction = new InputAction(binding: "<Mouse>/leftButton");
-        rayPickAction.performed += onRayPick;
+        rayPickAction.performed += OnRayPick;
+        rayPickAction.Disable();
+        HasBoomerang = false;
     }
 
     private void Update()
@@ -49,11 +59,14 @@ public class PlayerControl : MonoBehaviour
 
     private void OnDestroy()
     {
-        rayPickAction.performed -= onRayPick;
+        rayPickAction.performed -= OnRayPick;
     }
 
-    private void onRayPick(InputAction.CallbackContext context)
+    private void OnRayPick(InputAction.CallbackContext context)
     {
+        if (!HasBoomerang)
+            return;
+
         Transform cameraTransform = Camera.main.transform;
         Target target = null;
         float distance = maxRayDistance;
@@ -62,20 +75,21 @@ public class PlayerControl : MonoBehaviour
         RaycastHit[] hits = Physics.RaycastAll(cameraTransform.position, cameraTransform.forward, maxDistanceCamera);
         foreach (RaycastHit hit in hits)
         {
+            if (!hit.collider.CompareTag("Target"))
+                continue;
+
             if (Vector3.Dot(hit.collider.transform.position - transform.position, transform.forward) < 0)
                 continue;
 
             if (Vector3.Distance(hit.collider.transform.position, transform.position) > distance)
                 continue;
 
-            if (hit.collider.CompareTag("Target"))
-            {
-                target = hit.collider.GetComponent<Target>();
-                if (target.IsBeingAttack)
-                    continue;
+            Target newTarget = hit.collider.GetComponent<Target>();
+            if (newTarget.IsBeingAttack)
+                continue;
 
-                distance = Vector3.Distance(hit.collider.transform.position, transform.position);
-            }
+            target = newTarget;
+            distance = Vector3.Distance(hit.collider.transform.position, transform.position);
         }
 
         if (target == null)
@@ -86,12 +100,15 @@ public class PlayerControl : MonoBehaviour
         }
 
         // Debug.DrawLine(cameraTransform.position, target.transform.position, Color.red, 5f);
-        throwBoomerangAt(target);
+        GameplayEvents.PlayerAttack?.Invoke(target);
+
+        HasBoomerang = false;
+        StartCoroutine(StartAttackCooldown());
     }
 
-    private void throwBoomerangAt(Target target)
+    private IEnumerator StartAttackCooldown()
     {
-        // TODO
-        target.BeTargeted();
+        yield return new WaitForSeconds(attackCooldown);
+        HasBoomerang = true;
     }
 }

@@ -9,6 +9,7 @@ public class GameplayManager : MonoBehaviour
     const int MIN_OBSTACLE_COUNT = 100;
 
     [SerializeField] private PlayerControl player;
+    [SerializeField] private GameObject boomerangPrefab;
 
     StateMachine stateMachine;
     IState restState;
@@ -39,6 +40,9 @@ public class GameplayManager : MonoBehaviour
 
         if (player == null)
             throw new System.NullReferenceException("player is null");
+
+        if (boomerangPrefab == null)
+            throw new System.NullReferenceException("boomerangPrefab is null");
 
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -71,12 +75,15 @@ public class GameplayManager : MonoBehaviour
     private void EnterRunState()
     {
         SpawnAll();
-        player.EnableRayPick();
+        player.EnableAttack();
+        GameplayEvents.PlayerAttack += OnPlayerAttack;
     }
 
     private void ExitRunstate()
     {
-        player.DisableRayPick();
+        player.DisableAttack();
+        GameplayEvents.PlayerAttack -= OnPlayerAttack;
+        GameplayEvents.DespawnBoomerang?.Invoke();
     }
 
     private void EnterRestState()
@@ -97,5 +104,13 @@ public class GameplayManager : MonoBehaviour
 
         while (obstacleCount < MIN_OBSTACLE_COUNT)
             spawnManager.SpawnObstacles(obstacleCountDesired, out obstacleCount);
+    }
+
+    private void OnPlayerAttack(Target target)
+    {
+        GameObject obj = Instantiate(boomerangPrefab);
+        Boomerang boomerang = obj.GetComponent<Boomerang>();
+        boomerang.Init(player, target);
+        boomerang.Launch();
     }
 }

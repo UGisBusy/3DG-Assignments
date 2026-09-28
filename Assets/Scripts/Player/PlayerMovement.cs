@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 right = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
         Vector3 inputDirection = forward * nomralizedInput.y + right * nomralizedInput.x;
 
-        float factor = (mode == Mode.slow) ? 1 : 3;
+        float factor = (mode == Mode.slow) ? 1 : 2;
 
         Vector3 desiredVelocity = rawInput.magnitude > 0.0001f ? (inputDirection * topSpeed * factor) : Vector3.zero;
         Vector3 horizontalVelocity = Vector3.MoveTowards(currentHorizontal, desiredVelocity, acceleration * dt * factor);
@@ -112,7 +112,7 @@ public class PlayerMovement : MonoBehaviour
 
         foreach (Collider hit in hits)
         {
-            if (hit.CompareTag("Ground") || hit.CompareTag("Wall"))
+            if (hit.CompareTag("Ground") || hit.CompareTag("Wall") || hit.CompareTag("Target") || hit.CompareTag("Obstacle"))
                 return true;
         }
 
