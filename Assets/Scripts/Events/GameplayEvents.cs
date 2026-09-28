@@ -2,9 +2,8 @@ using System;
 
 public static class GameplayEvents
 {
-    // TODO: use for test for now
-    public static Action ProceedState;
-
+    public static Action EnterRestState;
+    public static Action EnterRunState;
     public static Action<Target> PlayerAttack;
     public static Action DespawnBoomerang;
 }
