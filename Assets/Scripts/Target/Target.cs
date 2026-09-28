@@ -8,12 +8,15 @@ public class Target : MonoBehaviour
     public void BeTargeted()
     {
         IsBeingAttack = true;
+    }
 
-        // TODO: for test 
+    public void BeAttacked()
+    {
+        // deactivate, later get destory by GameplayManager
         gameObject.SetActive(false);
     }
 
-    private void Start()
+    private void Awake()
     {
         IsBeingAttack = false;
     }

@@ -62,20 +62,21 @@ public class PlayerControl : MonoBehaviour
         RaycastHit[] hits = Physics.RaycastAll(cameraTransform.position, cameraTransform.forward, maxDistanceCamera);
         foreach (RaycastHit hit in hits)
         {
+            if (!hit.collider.CompareTag("Target"))
+                continue;
+
             if (Vector3.Dot(hit.collider.transform.position - transform.position, transform.forward) < 0)
                 continue;
 
             if (Vector3.Distance(hit.collider.transform.position, transform.position) > distance)
                 continue;
 
-            if (hit.collider.CompareTag("Target"))
-            {
-                target = hit.collider.GetComponent<Target>();
-                if (target.IsBeingAttack)
-                    continue;
+            Target newTarget = hit.collider.GetComponent<Target>();
+            if (newTarget.IsBeingAttack)
+                continue;
 
-                distance = Vector3.Distance(hit.collider.transform.position, transform.position);
-            }
+            target = newTarget;
+            distance = Vector3.Distance(hit.collider.transform.position, transform.position);
         }
 
         if (target == null)
@@ -86,12 +87,6 @@ public class PlayerControl : MonoBehaviour
         }
 
         // Debug.DrawLine(cameraTransform.position, target.transform.position, Color.red, 5f);
-        throwBoomerangAt(target);
-    }
-
-    private void throwBoomerangAt(Target target)
-    {
-        // TODO
-        target.BeTargeted();
+        GameplayEvents.PlayerAttack?.Invoke(target);
     }
 }
