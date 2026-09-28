@@ -112,7 +112,7 @@ public class PlayerMovement : MonoBehaviour
 
         foreach (Collider hit in hits)
         {
-            if (hit.CompareTag("Ground") || hit.CompareTag("Wall"))
+            if (hit.CompareTag("Ground") || hit.CompareTag("Wall") || hit.CompareTag("Target") || hit.CompareTag("Obstacle"))
                 return true;
         }
 
