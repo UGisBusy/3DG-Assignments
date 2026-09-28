@@ -8,6 +8,7 @@ public class Boomerang : MonoBehaviour
     Target target;
     bool isReturning;
     float flySpeed = 15f;
+    float hitForce = 20f;
 
     public void Init(PlayerControl player, Target target)
     {
@@ -47,7 +48,7 @@ public class Boomerang : MonoBehaviour
         if (!isReturning && other.gameObject == target.gameObject)
         {
             isReturning = true;
-            target.BeAttacked();
+            target.BeAttacked(transform.forward * hitForce);
 
             StopAllCoroutines();
             StartCoroutine(FlyTo(player.transform));
