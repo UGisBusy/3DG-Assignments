@@ -75,13 +75,13 @@ public class GameplayManager : MonoBehaviour
     private void EnterRunState()
     {
         SpawnAll();
-        player.EnableRayPick();
+        player.EnableAttack();
         GameplayEvents.PlayerAttack += OnPlayerAttack;
     }
 
     private void ExitRunstate()
     {
-        player.DisableRayPick();
+        player.DisableAttack();
         GameplayEvents.PlayerAttack -= OnPlayerAttack;
         GameplayEvents.DespawnBoomerang?.Invoke();
     }

@@ -7,7 +7,7 @@ public class Boomerang : MonoBehaviour
     PlayerControl player;
     Target target;
     bool isReturning;
-    float flySpeed = 15f;
+    float flySpeed = 25f;
     float hitForce = 20f;
 
     public void Init(PlayerControl player, Target target)
