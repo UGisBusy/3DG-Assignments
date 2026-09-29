@@ -7,10 +7,17 @@ public class GameplayManager : MonoBehaviour
     const int MIN_TOTAL_COUNT = 200;
     const int MIN_TARGET_COUNT = 100;
     const int MIN_OBSTACLE_COUNT = 100;
+    const int TARGET_SCORE = 10;
 
     [SerializeField] private PlayerControl player;
     [SerializeField] private GameObject boomerangPrefab;
     [SerializeField] private RestArea restArea;
+    [SerializeField] private UIManager uIManager;
+
+    public int TotalTargetCount { get => spawnManager == null ? 0 : spawnManager.TotalTargetCount; }
+    public int TotalObstacleCount { get => spawnManager == null ? 0 : spawnManager.TotalObstacleCount; }
+    public int TargetCount { get => spawnManager == null ? 0 : spawnManager.TargetCount; }
+    public int Score { get; private set; }
 
     StateMachine stateMachine;
     IState restState;
@@ -18,8 +25,6 @@ public class GameplayManager : MonoBehaviour
     IState exitState;
 
     SpawnManager spawnManager;
-    int targetCount => spawnManager.TargetCount;
-    int obstacleCount => spawnManager.ObstacleCount;
 
     public void Init()
     {
@@ -27,6 +32,7 @@ public class GameplayManager : MonoBehaviour
         SetLinks();
 
         spawnManager.Init();
+        uIManager.Init(this);
     }
 
     public void Run()
@@ -48,7 +54,11 @@ public class GameplayManager : MonoBehaviour
         if (restArea == null)
             throw new System.NullReferenceException("rest area is null");
 
+        if (uIManager == null)
+            throw new System.NullReferenceException("uIManager is null");
+
         Cursor.lockState = CursorLockMode.Locked;
+        Score = 0;
     }
 
     private void SetStates()
@@ -88,16 +98,19 @@ public class GameplayManager : MonoBehaviour
 
     private void EnterRunState()
     {
+        Score = 0;
         SpawnAll();
         player.EnableAttack();
         restArea.EnableCheckEnter();
         GameplayEvents.PlayerAttack += OnPlayerAttack;
+        GameplayEvents.TargetScores += OnTargetScores;
     }
 
     private void ExitRunstate()
     {
         player.DisableAttack();
         GameplayEvents.PlayerAttack -= OnPlayerAttack;
+        GameplayEvents.TargetScores -= OnTargetScores;
         GameplayEvents.DespawnBoomerang?.Invoke();
     }
 
@@ -128,5 +141,12 @@ public class GameplayManager : MonoBehaviour
         Boomerang boomerang = obj.GetComponent<Boomerang>();
         boomerang.Init(player, target);
         boomerang.Launch();
+    }
+
+    private void OnTargetScores()
+    {
+        if (stateMachine.CurrentState != runState)
+            return;
+        Score += TARGET_SCORE;
     }
 }
