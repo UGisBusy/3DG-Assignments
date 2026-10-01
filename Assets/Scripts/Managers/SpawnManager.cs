@@ -14,8 +14,9 @@ public class SpawnManager : MonoBehaviour
     const float SPWAN_POS_MARGIN = 2;
     const float TARGET_SPAWN_Y = 0.5f;
 
-    public int ObstacleCount => obstacles != null ? obstacles.Count : 0;
-    public int TargetCount => targets != null ? targets.Count : 0;
+    public int TotalObstacleCount => obstacles != null ? obstacles.Count : 0;
+    public int TotalTargetCount => targets != null ? targets.Count : 0;
+    public int TargetCount { get; private set; }
 
     GameObject[] obstaclePrefabs;
     GameObject[] targetPrefabs;
@@ -32,6 +33,8 @@ public class SpawnManager : MonoBehaviour
 
         LoadPrefabs();
         GenerateCells();
+
+        GameplayEvents.TargetScores += OnTargetScores;
     }
 
     public void SpawnTargets(int count, out int spawnedCount)
@@ -68,6 +71,8 @@ public class SpawnManager : MonoBehaviour
             targets.Add(comp);
             spawnedCount++;
         }
+
+        TargetCount = spawnedCount;
     }
 
     public void SpawnObstacles(int amount, out int spawnedAmount)
@@ -109,11 +114,19 @@ public class SpawnManager : MonoBehaviour
             Destroy(obj.gameObject);
         }
         obstacles.Clear();
+
+        TargetCount = 0;
     }
 
     private void OnDestroy()
     {
         DespawnAll();
+        GameplayEvents.TargetScores -= OnTargetScores;
+    }
+
+    private void OnTargetScores()
+    {
+        TargetCount--;
     }
 
     private void LoadPrefabs()

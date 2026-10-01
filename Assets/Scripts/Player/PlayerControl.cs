@@ -67,32 +67,32 @@ public class PlayerControl : MonoBehaviour
         if (!HasBoomerang)
             return;
 
+        Collider hitCollider = null;
         Transform cameraTransform = Camera.main.transform;
-        Target target = null;
         float distance = maxRayDistance;
         float maxDistanceCamera = maxRayDistance + Vector3.Distance(cameraTransform.position, transform.position) * 2;
 
         RaycastHit[] hits = Physics.RaycastAll(cameraTransform.position, cameraTransform.forward, maxDistanceCamera);
         foreach (RaycastHit hit in hits)
         {
-            if (!hit.collider.CompareTag("Target"))
-                continue;
-
             if (Vector3.Dot(hit.collider.transform.position - transform.position, transform.forward) < 0)
                 continue;
 
             if (Vector3.Distance(hit.collider.transform.position, transform.position) > distance)
                 continue;
 
-            Target newTarget = hit.collider.GetComponent<Target>();
-            if (newTarget.IsBeingAttack)
+            if (!hit.collider.CompareTag("Target") && !hit.collider.CompareTag("Obstacle"))
                 continue;
 
-            target = newTarget;
+            hitCollider = hit.collider;
             distance = Vector3.Distance(hit.collider.transform.position, transform.position);
         }
 
-        if (target == null)
+        if (
+            hitCollider == null ||
+            !hitCollider.CompareTag("Target") ||
+            hitCollider.GetComponent<Target>().IsBeingAttack
+        )
         {
             // TODO: play error sound
             // Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 100, Color.yellow, 5f);
@@ -100,8 +100,7 @@ public class PlayerControl : MonoBehaviour
         }
 
         // Debug.DrawLine(cameraTransform.position, target.transform.position, Color.red, 5f);
-        GameplayEvents.PlayerAttack?.Invoke(target);
-
+        GameplayEvents.PlayerAttack?.Invoke(hitCollider.GetComponent<Target>());
         HasBoomerang = false;
         StartCoroutine(StartAttackCooldown());
     }

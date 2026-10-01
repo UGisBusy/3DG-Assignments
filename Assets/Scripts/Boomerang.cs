@@ -44,6 +44,12 @@ public class Boomerang : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("Obstacle"))
+        {
+            other.GetComponent<Obstacle>().Push(transform.forward * hitForce * 0.5f);
+            return;
+        }
+
         if (!isReturning && other.gameObject == target.gameObject)
         {
             isReturning = true;
@@ -52,7 +58,7 @@ public class Boomerang : MonoBehaviour
             StopAllCoroutines();
             StartCoroutine(FlyTo(player.transform));
         }
-        else if (isReturning && other.gameObject == player.gameObject)
+        else if (isReturning && other.CompareTag("Player"))
         {
             StopAllCoroutines();
             Destroy(gameObject);

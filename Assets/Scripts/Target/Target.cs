@@ -34,5 +34,6 @@ public class Target : MonoBehaviour
     {
         yield return new WaitForSeconds(2);
         gameObject.SetActive(false);
+        GameplayEvents.TargetScores?.Invoke();
     }
 }
