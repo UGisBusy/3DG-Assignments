@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class MinimapUI : MonoBehaviour
 {
     [SerializeField] private RawImage mapImage;
-    [SerializeField] private RectTransform playerMarker;
+    [SerializeField] private LayerMask cullingMask = ~0;
     Vector2 areaCenter = Vector2.zero;
     float areaSize = 200;
     float cameraHeight = 100f;
@@ -13,30 +13,14 @@ public class MinimapUI : MonoBehaviour
     Camera mapCamera;
     RenderTexture renderTexture;
 
-    public void UpdatePlayer(Vector3 position, float yaw)
-    {
-        float u = (position.x - areaCenter.x) / areaSize + 0.5f;
-        float v = (position.z - areaCenter.y) / areaSize + 0.5f;
-        Vector2 anchor = new Vector2(Mathf.Clamp01(u), Mathf.Clamp01(v));
-
-        playerMarker.anchorMin = anchor;
-        playerMarker.anchorMax = anchor;
-        playerMarker.anchoredPosition = Vector2.zero;
-        playerMarker.localRotation = Quaternion.Euler(0f, 0f, -yaw);
-    }
-
     private void Awake()
     {
         if (mapImage == null)
             throw new System.NullReferenceException("minimap image is null");
 
-        if (playerMarker == null)
-            throw new System.NullReferenceException("minimap player marker is null");
-
         renderTexture = new RenderTexture(textureResolution, textureResolution, 16);
         mapImage.texture = renderTexture;
 
-        // fixed top-down camera covering the whole gameplay area
         GameObject cameraObj = new GameObject("MinimapCamera");
         cameraObj.transform.SetPositionAndRotation(
             new Vector3(areaCenter.x, cameraHeight, areaCenter.y),
@@ -49,7 +33,7 @@ public class MinimapUI : MonoBehaviour
         mapCamera.farClipPlane = cameraHeight + 10f;
         mapCamera.clearFlags = CameraClearFlags.SolidColor;
         mapCamera.backgroundColor = Color.black;
-        mapCamera.cullingMask &= ~LayerMask.GetMask("UI");
+        mapCamera.cullingMask = cullingMask;
         mapCamera.targetTexture = renderTexture;
     }
 

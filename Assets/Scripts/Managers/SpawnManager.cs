@@ -7,10 +7,10 @@ public class SpawnManager : MonoBehaviour
     const float WALL_MIN_X = -100;
     const float WALL_MAX_Z = 100;
     const float WALL_MIN_Z = -100;
-    const float PLATFORM_MAX_X = 5;
-    const float PLATFORM_MIN_X = -5;
-    const float PLATFORM_MAX_Z = 5;
-    const float PLATFORM_MIN_Z = -5;
+    const float PLATFORM_MAX_X = 10;
+    const float PLATFORM_MIN_X = -10;
+    const float PLATFORM_MAX_Z = 10;
+    const float PLATFORM_MIN_Z = -10;
     const float SPWAN_POS_MARGIN = 2;
     const float TARGET_SPAWN_Y = 0.5f;
 
