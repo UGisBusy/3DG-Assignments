@@ -19,6 +19,7 @@ public class GameplayManager : MonoBehaviour
     public int TargetCount { get => spawnManager == null ? 0 : spawnManager.TargetCount; }
     public int Score { get; private set; }
     public bool PlayerHasBoomerang { get => player.HasBoomerang; }
+    public float ElapsedTime { get; private set; }
 
     StateMachine stateMachine;
     IState restState;
@@ -26,6 +27,7 @@ public class GameplayManager : MonoBehaviour
     IState exitState;
 
     SpawnManager spawnManager;
+    bool isTimerRunning;
 
     public void Init()
     {
@@ -60,6 +62,12 @@ public class GameplayManager : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Score = 0;
+    }
+
+    private void Update()
+    {
+        if (isTimerRunning)
+            ElapsedTime += Time.deltaTime;
     }
 
     private void SetStates()
@@ -101,6 +109,8 @@ public class GameplayManager : MonoBehaviour
     {
         Score = 0;
         SpawnAll();
+        ElapsedTime = 0f;
+        isTimerRunning = true;
         player.EnableAttack();
         restArea.EnableCheckEnter();
         GameplayEvents.PlayerAttack += OnPlayerAttack;
@@ -109,6 +119,7 @@ public class GameplayManager : MonoBehaviour
 
     private void ExitRunstate()
     {
+        isTimerRunning = false;
         player.DisableAttack();
         GameplayEvents.PlayerAttack -= OnPlayerAttack;
         GameplayEvents.TargetScores -= OnTargetScores;
