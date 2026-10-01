@@ -18,6 +18,7 @@ public class GameplayManager : MonoBehaviour
     public int TotalObstacleCount { get => spawnManager == null ? 0 : spawnManager.TotalObstacleCount; }
     public int TargetCount { get => spawnManager == null ? 0 : spawnManager.TargetCount; }
     public int Score { get; private set; }
+    public bool PlayerHasBoomerang { get => player.HasBoomerang; }
 
     StateMachine stateMachine;
     IState restState;
