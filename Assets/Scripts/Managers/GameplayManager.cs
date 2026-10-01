@@ -19,6 +19,8 @@ public class GameplayManager : MonoBehaviour
     public int TargetCount { get => spawnManager == null ? 0 : spawnManager.TargetCount; }
     public int Score { get; private set; }
     public bool PlayerHasBoomerang { get => player.HasBoomerang; }
+    public Vector3 PlayerPosition { get => player.transform.position; }
+    public float PlayerYaw { get => player.Yaw; }
     public float ElapsedTime { get; private set; }
 
     StateMachine stateMachine;
