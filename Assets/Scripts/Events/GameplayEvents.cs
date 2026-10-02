@@ -7,4 +7,5 @@ public static class GameplayEvents
     public static Action<Target> PlayerAttack;
     public static Action DespawnBoomerang;
     public static Action TargetScores;
+    public static Action<CollectableType> ItemCollected;
 }

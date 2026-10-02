@@ -20,8 +20,10 @@ public class SpawnManager : MonoBehaviour
 
     GameObject[] obstaclePrefabs;
     GameObject[] targetPrefabs;
+    GameObject[] collectablePrefabs;
     List<Obstacle> obstacles;
     List<Target> targets;
+    List<Collectable> collectables;
 
     float cellLength;
     List<Vector2> cellArray;
@@ -30,6 +32,7 @@ public class SpawnManager : MonoBehaviour
     {
         obstacles = new List<Obstacle>();
         targets = new List<Target>();
+        collectables = new List<Collectable>();
 
         LoadPrefabs();
         GenerateCells();
@@ -95,27 +98,52 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    public void SpawnCollectables(int amount, out int spawnedAmount)
+    {
+        spawnedAmount = 0;
+        for (int i = 0; i < amount; i++)
+        {
+            int pickId = (int)(Random.value * collectablePrefabs.Length);
+            GameObject obj = Instantiate(collectablePrefabs[pickId], GetRandomPos(), Quaternion.identity);
+
+            Collectable comp = obj.GetComponent<Collectable>();
+            if (comp == null)
+            {
+                Destroy(obj);
+                continue;
+            }
+
+            collectables.Add(comp);
+            spawnedAmount++;
+        }
+    }
+
     public void DespawnAll()
     {
         foreach (Target target in targets)
         {
             if (target == null)
                 continue;
-
             Destroy(target.gameObject);
         }
         targets.Clear();
+        TargetCount = 0;
 
-        foreach (Obstacle obj in obstacles)
+        foreach (Obstacle obstacle in obstacles)
         {
-            if (obj == null)
+            if (obstacle == null)
                 continue;
-
-            Destroy(obj.gameObject);
+            Destroy(obstacle.gameObject);
         }
         obstacles.Clear();
 
-        TargetCount = 0;
+        foreach (Collectable collectable in collectables)
+        {
+            if (collectable == null)
+                continue;
+            Destroy(collectable.gameObject);
+        }
+        collectables.Clear();
     }
 
     private void OnDestroy()
@@ -133,9 +161,11 @@ public class SpawnManager : MonoBehaviour
     {
         string obstablesDir = "Prefabs/Obstacles";
         string targetsDir = "Prefabs/Targets";
+        string collectableDir = "Prefabs/Collectables";
 
         obstaclePrefabs = Resources.LoadAll<GameObject>(obstablesDir);
         targetPrefabs = Resources.LoadAll<GameObject>(targetsDir);
+        collectablePrefabs = Resources.LoadAll<GameObject>(collectableDir);
     }
 
     private void GenerateCells()
@@ -176,7 +206,8 @@ public class SpawnManager : MonoBehaviour
         }
         while (platform.Contains(new Vector2(x, z)));
 
-        y = Random.Range(1, 5);
+        // y = Random.Range(1, 5);
+        y = 0.5f;
 
         return new Vector3(x, y, z);
     }

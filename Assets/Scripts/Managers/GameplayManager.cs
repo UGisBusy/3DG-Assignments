@@ -8,6 +8,7 @@ public class GameplayManager : MonoBehaviour
     const int MIN_TARGET_COUNT = 100;
     const int MIN_OBSTACLE_COUNT = 100;
     const int TARGET_SCORE = 10;
+    const int COIN_SCORE = 5;
 
     [SerializeField] private PlayerControl player;
     [SerializeField] private GameObject boomerangPrefab;
@@ -115,6 +116,7 @@ public class GameplayManager : MonoBehaviour
         restArea.EnableCheckEnter();
         GameplayEvents.PlayerAttack += OnPlayerAttack;
         GameplayEvents.TargetScores += OnTargetScores;
+        GameplayEvents.ItemCollected += OnItemCollected;
     }
 
     private void ExitRunstate()
@@ -123,6 +125,7 @@ public class GameplayManager : MonoBehaviour
         player.DisableAttack();
         GameplayEvents.PlayerAttack -= OnPlayerAttack;
         GameplayEvents.TargetScores -= OnTargetScores;
+        GameplayEvents.ItemCollected -= OnItemCollected;
         GameplayEvents.DespawnBoomerang?.Invoke();
     }
 
@@ -145,6 +148,9 @@ public class GameplayManager : MonoBehaviour
 
         while (obstacleCount < MIN_OBSTACLE_COUNT)
             spawnManager.SpawnObstacles(obstacleCountDesired, out obstacleCount);
+
+        int collectableCount = 100;
+        spawnManager.SpawnCollectables(collectableCount, out collectableCount);
     }
 
     private void OnPlayerAttack(Target target)
@@ -160,5 +166,18 @@ public class GameplayManager : MonoBehaviour
         if (stateMachine.CurrentState != runState)
             return;
         Score += TARGET_SCORE;
+    }
+
+    private void OnItemCollected(CollectableType type)
+    {
+        if (stateMachine.CurrentState != runState)
+            return;
+
+        switch (type)
+        {
+            case CollectableType.Coin:
+                Score += COIN_SCORE;
+                break;
+        }
     }
 }
