@@ -21,5 +21,7 @@ public class UIManager : MonoBehaviour
         hudUI.UpdateScore(gameplayManager.Score);
         hudUI.UpdateTargetCount(gameplayManager.TargetCount, gameplayManager.TotalTargetCount);
         hudUI.UpdateObstacleCount(gameplayManager.TotalObstacleCount);
+        hudUI.UpdateBoomerang(gameplayManager.PlayerHasBoomerang);
+        hudUI.UpdateTimer(gameplayManager.ElapsedTime);
     }
 }

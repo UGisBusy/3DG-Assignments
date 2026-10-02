@@ -8,6 +8,7 @@ public class GameplayManager : MonoBehaviour
     const int MIN_TARGET_COUNT = 100;
     const int MIN_OBSTACLE_COUNT = 100;
     const int TARGET_SCORE = 10;
+    const int COIN_SCORE = 5;
 
     [SerializeField] private PlayerControl player;
     [SerializeField] private GameObject boomerangPrefab;
@@ -18,6 +19,8 @@ public class GameplayManager : MonoBehaviour
     public int TotalObstacleCount { get => spawnManager == null ? 0 : spawnManager.TotalObstacleCount; }
     public int TargetCount { get => spawnManager == null ? 0 : spawnManager.TargetCount; }
     public int Score { get; private set; }
+    public bool PlayerHasBoomerang { get => player.HasBoomerang; }
+    public float ElapsedTime { get; private set; }
 
     StateMachine stateMachine;
     IState restState;
@@ -25,6 +28,7 @@ public class GameplayManager : MonoBehaviour
     IState exitState;
 
     SpawnManager spawnManager;
+    bool isTimerRunning;
 
     public void Init()
     {
@@ -59,6 +63,12 @@ public class GameplayManager : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Score = 0;
+    }
+
+    private void Update()
+    {
+        if (isTimerRunning)
+            ElapsedTime += Time.deltaTime;
     }
 
     private void SetStates()
@@ -100,17 +110,22 @@ public class GameplayManager : MonoBehaviour
     {
         Score = 0;
         SpawnAll();
+        ElapsedTime = 0f;
+        isTimerRunning = true;
         player.EnableAttack();
         restArea.EnableCheckEnter();
         GameplayEvents.PlayerAttack += OnPlayerAttack;
         GameplayEvents.TargetScores += OnTargetScores;
+        GameplayEvents.ItemCollected += OnItemCollected;
     }
 
     private void ExitRunstate()
     {
+        isTimerRunning = false;
         player.DisableAttack();
         GameplayEvents.PlayerAttack -= OnPlayerAttack;
         GameplayEvents.TargetScores -= OnTargetScores;
+        GameplayEvents.ItemCollected -= OnItemCollected;
         GameplayEvents.DespawnBoomerang?.Invoke();
     }
 
@@ -133,6 +148,9 @@ public class GameplayManager : MonoBehaviour
 
         while (obstacleCount < MIN_OBSTACLE_COUNT)
             spawnManager.SpawnObstacles(obstacleCountDesired, out obstacleCount);
+
+        int collectableCount = 100;
+        spawnManager.SpawnCollectables(collectableCount, out collectableCount);
     }
 
     private void OnPlayerAttack(Target target)
@@ -148,5 +166,18 @@ public class GameplayManager : MonoBehaviour
         if (stateMachine.CurrentState != runState)
             return;
         Score += TARGET_SCORE;
+    }
+
+    private void OnItemCollected(CollectableType type)
+    {
+        if (stateMachine.CurrentState != runState)
+            return;
+
+        switch (type)
+        {
+            case CollectableType.Coin:
+                Score += COIN_SCORE;
+                break;
+        }
     }
 }

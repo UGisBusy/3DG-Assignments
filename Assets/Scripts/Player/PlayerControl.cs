@@ -15,7 +15,7 @@ public class PlayerControl : MonoBehaviour
     private float maxPitch = 80f;
 
     InputAction rayPickAction;
-    private float maxRayDistance = 100f;
+    private float maxRayDistance = 50f;
 
     private float attackCooldown = 2f;
 
@@ -70,7 +70,7 @@ public class PlayerControl : MonoBehaviour
         Collider hitCollider = null;
         Transform cameraTransform = Camera.main.transform;
         float distance = maxRayDistance;
-        float maxDistanceCamera = maxRayDistance + Vector3.Distance(cameraTransform.position, transform.position) * 2;
+        float maxDistanceCamera = maxRayDistance * 1.5f + Vector3.Distance(cameraTransform.position, transform.position);
 
         RaycastHit[] hits = Physics.RaycastAll(cameraTransform.position, cameraTransform.forward, maxDistanceCamera);
         foreach (RaycastHit hit in hits)
