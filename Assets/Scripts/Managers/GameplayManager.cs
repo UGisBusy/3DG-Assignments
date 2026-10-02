@@ -149,8 +149,8 @@ public class GameplayManager : MonoBehaviour
         while (obstacleCount < MIN_OBSTACLE_COUNT)
             spawnManager.SpawnObstacles(obstacleCountDesired, out obstacleCount);
 
-        int collectableCount = 100;
-        spawnManager.SpawnCollectables(collectableCount, out collectableCount);
+        int collectibleCount = 100;
+        spawnManager.SpawnCollectibles(collectibleCount, out collectibleCount);
     }
 
     private void OnPlayerAttack(Target target)
@@ -168,14 +168,14 @@ public class GameplayManager : MonoBehaviour
         Score += TARGET_SCORE;
     }
 
-    private void OnItemCollected(CollectableType type)
+    private void OnItemCollected(CollectibleType type)
     {
         if (stateMachine.CurrentState != runState)
             return;
 
         switch (type)
         {
-            case CollectableType.Coin:
+            case CollectibleType.Coin:
                 Score += COIN_SCORE;
                 break;
         }

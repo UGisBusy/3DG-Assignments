@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public enum CollectableType { Coin }
+public enum CollectibleType { Coin }
 
-public abstract class Collectable : MonoBehaviour
+public abstract class Collectible : MonoBehaviour
 {
-    public CollectableType Type => GetCollectableType();
+    public CollectibleType Type => GetCollectibleType();
 
-    protected abstract CollectableType GetCollectableType();
+    protected abstract CollectibleType GetCollectibleType();
 
     private void OnTriggerEnter(Collider other)
     {

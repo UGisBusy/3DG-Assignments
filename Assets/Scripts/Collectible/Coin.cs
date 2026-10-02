@@ -1,15 +1,15 @@
 using UnityEngine;
 
-public class Coin : Collectable
+public class Coin : Collectible
 {
     [SerializeField] private Transform model;
 
     float spinSpeed = 180f;
     float yaw;
 
-    protected override CollectableType GetCollectableType()
+    protected override CollectibleType GetCollectibleType()
     {
-        return CollectableType.Coin;
+        return CollectibleType.Coin;
     }
 
     private void Awake()
