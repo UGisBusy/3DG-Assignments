@@ -10,7 +10,7 @@ public class HudUI : MonoBehaviour
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private Image boomerangImage;
 
-    Color boomerangReadyColor = Color.white;
+    Color boomerangReadyColor = new Color(0f, 0.8f, 0f, 0.8f);
     Color boomerangUnavailableColor = new Color(0.3f, 0.3f, 0.3f, 0.6f);
 
     public void UpdateScore(int score)
