@@ -47,6 +47,7 @@ public class Boomerang : MonoBehaviour
         if (other.CompareTag("Obstacle"))
         {
             other.GetComponent<Obstacle>().Push(transform.forward * hitForce * 0.5f);
+            GameplayEvents.BoomerangHit?.Invoke(transform.position);
             return;
         }
 
@@ -54,6 +55,7 @@ public class Boomerang : MonoBehaviour
         {
             isReturning = true;
             target.BeAttacked(transform.forward * hitForce);
+            GameplayEvents.BoomerangHit?.Invoke(transform.position);
 
             StopAllCoroutines();
             StartCoroutine(FlyTo(player.transform));

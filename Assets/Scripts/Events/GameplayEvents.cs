@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public static class GameplayEvents
 {
@@ -8,4 +9,6 @@ public static class GameplayEvents
     public static Action DespawnBoomerang;
     public static Action TargetScores;
     public static Action<CollectibleType> ItemCollected;
+    public static Action<Vector3> BoomerangHit;
+    public static Action InvalidSelection;
 }
