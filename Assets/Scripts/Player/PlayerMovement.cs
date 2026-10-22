@@ -69,6 +69,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!IsGrounded)
+            return;
+
         Vector2 rawInput = moveAction.action.ReadValue<Vector2>();
 
         float dt = Time.fixedDeltaTime;
