@@ -11,6 +11,7 @@ public class CameraControl : MonoBehaviour
 
     Mode mode;
     PlayerControl playerControl;
+    PlayerAnimation playerAnimation;
     Transform pivotTransform;
     SphereCollider cameraCollider;
     Vector3 offset = new Vector3(0, 2, -4);
@@ -25,6 +26,7 @@ public class CameraControl : MonoBehaviour
     private void Start()
     {
         playerControl = GetComponentInParent<PlayerControl>();
+        playerAnimation = playerControl.GetComponent<PlayerAnimation>();
         cameraCollider = GetComponentInChildren<SphereCollider>();
         pivotTransform = transform.parent;
 
@@ -60,6 +62,7 @@ public class CameraControl : MonoBehaviour
         transform.localPosition = Vector3.zero;
         cameraCollider.enabled = false;
         mode = Mode.FirstPerson;
+        SetModelVisible(false);
     }
 
     private void SwitchToThirdPerson()
@@ -67,6 +70,13 @@ public class CameraControl : MonoBehaviour
         transform.localRotation = Quaternion.identity;
         cameraCollider.enabled = true;
         mode = Mode.ThirdPerson;
+        SetModelVisible(true);
+    }
+
+    private void SetModelVisible(bool visible)
+    {
+        if (playerAnimation != null)
+            playerAnimation.SetModelVisible(visible);
     }
 
     private void FixCameraGround()
