@@ -28,6 +28,7 @@ public class GameplayManager : MonoBehaviour
     IState exitState;
 
     SpawnManager spawnManager;
+    AudioManager audioManager;
     bool isTimerRunning;
 
     public void Init()
@@ -36,6 +37,7 @@ public class GameplayManager : MonoBehaviour
         SetLinks();
 
         spawnManager.Init();
+        audioManager.Init();
         uIManager.Init(this);
     }
 
@@ -48,6 +50,7 @@ public class GameplayManager : MonoBehaviour
     {
         stateMachine = new StateMachine();
         spawnManager = GetComponent<SpawnManager>();
+        audioManager = gameObject.AddComponent<AudioManager>();
 
         if (player == null)
             throw new System.NullReferenceException("player is null");

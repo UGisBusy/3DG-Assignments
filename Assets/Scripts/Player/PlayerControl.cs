@@ -65,7 +65,10 @@ public class PlayerControl : MonoBehaviour
     private void OnRayPick(InputAction.CallbackContext context)
     {
         if (!HasBoomerang)
+        {
+            GameplayEvents.InvalidSelection?.Invoke();
             return;
+        }
 
         Collider hitCollider = null;
         Transform cameraTransform = Camera.main.transform;
@@ -94,7 +97,7 @@ public class PlayerControl : MonoBehaviour
             hitCollider.GetComponent<Target>().IsBeingAttack
         )
         {
-            // TODO: play error sound
+            GameplayEvents.InvalidSelection?.Invoke();
             // Debug.DrawRay(cameraTransform.position, cameraTransform.forward * 100, Color.yellow, 5f);
             return;
         }
