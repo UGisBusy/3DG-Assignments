@@ -12,7 +12,16 @@ public class SpawnManager : MonoBehaviour
     const float PLATFORM_MAX_Z = 10;
     const float PLATFORM_MIN_Z = -10;
     const float SPWAN_POS_MARGIN = 2;
-    const float TARGET_SPAWN_Y = 0.5f;
+    const float SPAWN_Y = 0.5f;
+    const float SPAWN_GAP = 0.5f;
+    const float DEFAULT_FOOTPRINT_RADIUS = 0.5f;
+    const int MAX_SPAWN_ATTEMPTS = 30;
+
+    struct SpawnSlot
+    {
+        public Vector2 Position;
+        public float Radius;
+    }
 
     public int TotalObstacleCount => obstacles != null ? obstacles.Count : 0;
     public int TotalTargetCount => targets != null ? targets.Count : 0;
@@ -27,12 +36,16 @@ public class SpawnManager : MonoBehaviour
 
     float cellLength;
     List<Vector2> cellArray;
+    List<SpawnSlot> occupiedSlots;
+    Dictionary<GameObject, float> footprintRadii;
 
     public void Init()
     {
         obstacles = new List<Obstacle>();
         targets = new List<Target>();
         collectibles = new List<Collectible>();
+        occupiedSlots = new List<SpawnSlot>();
+        footprintRadii = new Dictionary<GameObject, float>();
 
         LoadPrefabs();
         GenerateCells();
@@ -42,40 +55,20 @@ public class SpawnManager : MonoBehaviour
 
     public void SpawnTargets(int count, out int spawnedCount)
     {
-        // shuffle cellArray
-        for (int i = cellArray.Count - 1; i > 0; i--)
-        {
-            int j = Random.Range(0, i + 1);
-            (cellArray[i], cellArray[j]) = (cellArray[j], cellArray[i]);
-        }
+        ShuffleCells();
 
-        float margin = SPWAN_POS_MARGIN / 2;
         spawnedCount = 0;
-
-        foreach (Vector2 rawPos in cellArray.GetRange(0, count))
+        foreach (Vector2 cell in cellArray.GetRange(0, Mathf.Min(count, cellArray.Count)))
         {
-            float minX = rawPos.x + margin;
-            float maxX = rawPos.x + cellLength - margin;
-            float minZ = rawPos.y + margin;
-            float maxZ = rawPos.y + cellLength - margin;
-
-            Vector3 pos = new Vector3(Random.Range(minX, maxX), TARGET_SPAWN_Y, Random.Range(minZ, maxZ));
-            Quaternion rot = GetRandomRot(true);
-            int pickId = (int)(Random.value * targetPrefabs.Length);
-            GameObject obj = Instantiate(targetPrefabs[pickId], pos, rot);
-
-            Target comp = obj.GetComponent<Target>();
+            Target comp = TrySpawn<Target>(targetPrefabs, () => GetRandomPosInCell(cell), GetRandomRot(true));
             if (comp == null)
-            {
-                Destroy(obj);
                 continue;
-            }
 
             targets.Add(comp);
             spawnedCount++;
         }
 
-        TargetCount = spawnedCount;
+        TargetCount += spawnedCount;
     }
 
     public void SpawnObstacles(int amount, out int spawnedAmount)
@@ -83,15 +76,9 @@ public class SpawnManager : MonoBehaviour
         spawnedAmount = 0;
         for (int i = 0; i < amount; i++)
         {
-            int pickId = (int)(Random.value * obstaclePrefabs.Length);
-            GameObject obj = Instantiate(obstaclePrefabs[pickId], GetRandomPos(), GetRandomRot());
-
-            Obstacle comp = obj.GetComponent<Obstacle>();
+            Obstacle comp = TrySpawn<Obstacle>(obstaclePrefabs, GetRandomPos, GetRandomRot());
             if (comp == null)
-            {
-                Destroy(obj);
                 continue;
-            }
 
             obstacles.Add(comp);
             spawnedAmount++;
@@ -103,15 +90,9 @@ public class SpawnManager : MonoBehaviour
         spawnedAmount = 0;
         for (int i = 0; i < amount; i++)
         {
-            int pickId = (int)(Random.value * collectiblePrefabs.Length);
-            GameObject obj = Instantiate(collectiblePrefabs[pickId], GetRandomPos(), Quaternion.identity);
-
-            Collectible comp = obj.GetComponent<Collectible>();
+            Collectible comp = TrySpawn<Collectible>(collectiblePrefabs, GetRandomPos, Quaternion.identity);
             if (comp == null)
-            {
-                Destroy(obj);
                 continue;
-            }
 
             collectibles.Add(comp);
             spawnedAmount++;
@@ -144,6 +125,8 @@ public class SpawnManager : MonoBehaviour
             Destroy(collectible.gameObject);
         }
         collectibles.Clear();
+
+        occupiedSlots.Clear();
     }
 
     private void OnDestroy()
@@ -192,6 +175,106 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    private T TrySpawn<T>(GameObject[] prefabs, System.Func<Vector3> samplePosition, Quaternion rotation) where T : Component
+    {
+        GameObject prefab = prefabs[Random.Range(0, prefabs.Length)];
+        float radius = GetFootprintRadius(prefab);
+
+        if (!TryFindFreePosition(samplePosition, radius, out Vector3 position))
+            return null;
+
+        GameObject obj = Instantiate(prefab, position, rotation);
+        T comp = obj.GetComponent<T>();
+        if (comp == null)
+        {
+            Destroy(obj);
+            return null;
+        }
+
+        occupiedSlots.Add(new SpawnSlot { Position = new Vector2(position.x, position.z), Radius = radius });
+        return comp;
+    }
+
+    private bool TryFindFreePosition(System.Func<Vector3> samplePosition, float radius, out Vector3 position)
+    {
+        for (int i = 0; i < MAX_SPAWN_ATTEMPTS; i++)
+        {
+            position = samplePosition();
+            if (IsPositionFree(position, radius))
+                return true;
+        }
+
+        position = Vector3.zero;
+        return false;
+    }
+
+    private bool IsPositionFree(Vector3 position, float radius)
+    {
+        Vector2 flatPosition = new Vector2(position.x, position.z);
+        foreach (SpawnSlot slot in occupiedSlots)
+        {
+            if (Vector2.Distance(flatPosition, slot.Position) < radius + slot.Radius + SPAWN_GAP)
+                return false;
+        }
+
+        Collider[] hits = Physics.OverlapSphere(position, radius, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+        foreach (Collider hit in hits)
+        {
+            if (!hit.CompareTag("Ground"))
+                return false;
+        }
+
+        return true;
+    }
+
+    private float GetFootprintRadius(GameObject prefab)
+    {
+        if (footprintRadii.TryGetValue(prefab, out float cached))
+            return cached;
+
+        Vector3 scale = prefab.transform.localScale;
+        float horizontalScale = Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z));
+        float radius;
+
+        switch (prefab.GetComponent<Collider>())
+        {
+            case BoxCollider box:
+                Vector2 halfSize = new Vector2(box.size.x * scale.x, box.size.z * scale.z) * 0.5f;
+                Vector2 offset = new Vector2(box.center.x * scale.x, box.center.z * scale.z);
+                radius = halfSize.magnitude + offset.magnitude;
+                break;
+            case SphereCollider sphere:
+                radius = sphere.radius * horizontalScale;
+                break;
+            case CapsuleCollider capsule:
+                radius = (capsule.direction == 1 ? capsule.radius : capsule.height / 2f) * horizontalScale;
+                break;
+            default:
+                radius = DEFAULT_FOOTPRINT_RADIUS;
+                break;
+        }
+
+        footprintRadii[prefab] = radius;
+        return radius;
+    }
+
+    private void ShuffleCells()
+    {
+        for (int i = cellArray.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (cellArray[i], cellArray[j]) = (cellArray[j], cellArray[i]);
+        }
+    }
+
+    private Vector3 GetRandomPosInCell(Vector2 cell)
+    {
+        float margin = SPWAN_POS_MARGIN / 2;
+        float x = Random.Range(cell.x + margin, cell.x + cellLength - margin);
+        float z = Random.Range(cell.y + margin, cell.y + cellLength - margin);
+        return new Vector3(x, SPAWN_Y, z);
+    }
+
     private Vector3 GetRandomPos()
     {
         float x, y, z;
@@ -207,7 +290,7 @@ public class SpawnManager : MonoBehaviour
         while (platform.Contains(new Vector2(x, z)));
 
         // y = Random.Range(1, 5);
-        y = 0.5f;
+        y = SPAWN_Y;
 
         return new Vector3(x, y, z);
     }

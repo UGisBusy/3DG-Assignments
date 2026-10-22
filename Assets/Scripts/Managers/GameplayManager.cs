@@ -9,6 +9,7 @@ public class GameplayManager : MonoBehaviour
     const int MIN_OBSTACLE_COUNT = 100;
     const int TARGET_SCORE = 10;
     const int COIN_SCORE = 5;
+    const int MAX_SPAWN_ROUNDS = 5;
 
     [SerializeField] private PlayerControl player;
     [SerializeField] private GameObject boomerangPrefab;
@@ -146,11 +147,20 @@ public class GameplayManager : MonoBehaviour
 
         int targetCount = 0, obstacleCount = 0;
 
-        while (targetCount < MIN_TARGET_COUNT)
-            spawnManager.SpawnTargets(targetCountDesired, out targetCount);
+        for (int round = 0; round < MAX_SPAWN_ROUNDS && targetCount < MIN_TARGET_COUNT; round++)
+        {
+            spawnManager.SpawnTargets(targetCountDesired - targetCount, out int spawned);
+            targetCount += spawned;
+        }
 
-        while (obstacleCount < MIN_OBSTACLE_COUNT)
-            spawnManager.SpawnObstacles(obstacleCountDesired, out obstacleCount);
+        for (int round = 0; round < MAX_SPAWN_ROUNDS && obstacleCount < MIN_OBSTACLE_COUNT; round++)
+        {
+            spawnManager.SpawnObstacles(obstacleCountDesired - obstacleCount, out int spawned);
+            obstacleCount += spawned;
+        }
+
+        if (targetCount < MIN_TARGET_COUNT || obstacleCount < MIN_OBSTACLE_COUNT)
+            Debug.LogWarning($"[GameplayManager] only spawned {targetCount} targets and {obstacleCount} obstacles");
 
         int collectibleCount = 100;
         spawnManager.SpawnCollectibles(collectibleCount, out collectibleCount);

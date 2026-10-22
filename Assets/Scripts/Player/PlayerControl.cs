@@ -17,7 +17,7 @@ public class PlayerControl : MonoBehaviour
     InputAction rayPickAction;
     private float maxRayDistance = 50f;
 
-    private float attackCooldown = 2f;
+    private float attackCooldown = 3f;
 
     public void EnableAttack()
     {
