@@ -7,6 +7,7 @@ A simple crane holding a spinning saw blade, built by hand in the editor.
 | Component | What it does | Attach to |
 | --- | --- | --- |
 | `CraneJoint` | Rotates the object about one local axis. **Mode** dropdown: *Manual* (hold CW / CCW key), *AutoCW* (keeps rotating clockwise), *AutoCCW* (keeps rotating counter-clockwise), *Swing* (back and forth between min and max). Keys are ignored in auto modes. | A_Base, B_Arm, C_Blade |
+| `EnvironmentBuilder` | On Play, places the prefabs from `Prefabs/` around itself in loops: 28 fence posts in a ring, ~45 rocks and ~35 trees at random non-overlapping spots. | an empty GameObject at the crane's position |
 | `PeriodicSlider` | Moves the object along its parent's axis: `rest + axis * A * sin(2*pi*f*t)` | C_Blade |
 
 Both keep the rotation / position you set in the editor as the rest pose.
