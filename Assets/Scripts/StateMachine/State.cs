@@ -7,7 +7,8 @@ public class State
     List<ILink> links;
     bool isTransitionEventBound;
 
-    Action enter, exit;
+    Action enter,
+        exit;
 
     public State(Action enter = null, Action exit = null)
     {

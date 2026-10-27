@@ -32,11 +32,7 @@ public class SequenceManager : MonoBehaviour
         SetLinks();
     }
 
-    private void SetStates()
-    {
-    }
+    private void SetStates() { }
 
-    private void SetLinks()
-    {
-    }
+    private void SetLinks() { }
 }

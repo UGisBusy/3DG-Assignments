@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class Coin : Collectible
 {
-    [SerializeField] private Transform model;
+    [SerializeField]
+    private Transform model;
 
     float spinSpeed = 180f;
     float yaw;

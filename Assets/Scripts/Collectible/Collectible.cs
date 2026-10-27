@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public enum CollectibleType { Coin }
+public enum CollectibleType
+{
+    Coin,
+}
 
 public abstract class Collectible : MonoBehaviour
 {

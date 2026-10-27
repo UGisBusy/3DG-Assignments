@@ -7,7 +7,8 @@ public static class PlayerModelSetup
 {
     const string MENU_PATH = "3DG/Setup Player Model";
     const string PACK_DIR = "Assets/Haons SD series Pack";
-    const string CHARACTER_PREFAB = PACK_DIR + "/Prefab/CharacterSet/prf_Set Costume01 Unity-Chan.prefab";
+    const string CHARACTER_PREFAB =
+        PACK_DIR + "/Prefab/CharacterSet/prf_Set Costume01 Unity-Chan.prefab";
     const string IDLE_FBX = PACK_DIR + "/Animation/Common/StandA_idleA.FBX";
     const string WALK_FBX = PACK_DIR + "/Animation/Common/WalkA_Front.FBX";
     const string RUN_FBX = PACK_DIR + "/Animation/Common/RunA_Front.FBX";
@@ -30,7 +31,11 @@ public static class PlayerModelSetup
         PlayerMovement player = Object.FindFirstObjectByType<PlayerMovement>();
         if (player == null)
         {
-            EditorUtility.DisplayDialog("Setup Player Model", "No PlayerMovement found in the open scene.", "OK");
+            EditorUtility.DisplayDialog(
+                "Setup Player Model",
+                "No PlayerMovement found in the open scene.",
+                "OK"
+            );
             return;
         }
 
@@ -47,17 +52,25 @@ public static class PlayerModelSetup
             AssetDatabase.CreateFolder("Assets/Resources", "Animations");
 
         AssetDatabase.DeleteAsset(CONTROLLER_PATH);
-        AnimatorController controller = AnimatorController.CreateAnimatorControllerAtPath(CONTROLLER_PATH);
+        AnimatorController controller = AnimatorController.CreateAnimatorControllerAtPath(
+            CONTROLLER_PATH
+        );
 
         controller.AddParameter("Speed", AnimatorControllerParameterType.Float);
-        controller.AddParameter(new AnimatorControllerParameter
-        {
-            name = "MoveSpeedScale",
-            type = AnimatorControllerParameterType.Float,
-            defaultFloat = 1f
-        });
+        controller.AddParameter(
+            new AnimatorControllerParameter
+            {
+                name = "MoveSpeedScale",
+                type = AnimatorControllerParameterType.Float,
+                defaultFloat = 1f,
+            }
+        );
 
-        AnimatorState locomotion = controller.CreateBlendTreeInController("Locomotion", out BlendTree tree, 0);
+        AnimatorState locomotion = controller.CreateBlendTreeInController(
+            "Locomotion",
+            out BlendTree tree,
+            0
+        );
         tree.blendType = BlendTreeType.Simple1D;
         tree.blendParameter = "Speed";
         tree.useAutomaticThresholds = false;
@@ -94,7 +107,9 @@ public static class PlayerModelSetup
 
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CHARACTER_PREFAB);
         if (prefab == null)
-            throw new System.Exception($"[PlayerModelSetup] prefab not found at {CHARACTER_PREFAB}");
+            throw new System.Exception(
+                $"[PlayerModelSetup] prefab not found at {CHARACTER_PREFAB}"
+            );
 
         GameObject model = (GameObject)PrefabUtility.InstantiatePrefab(prefab, playerTransform);
         Undo.RegisterCreatedObjectUndo(model, MENU_PATH);
