@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class Link : ILink
 {
-    Action<IState> outputListener;
+    Action<State> outputListener;
     EventWrapper sourceWrapper;
-    IState nextState;
+    State nextState;
 
-    public Link(IState nextState, EventWrapper sourceWrapper)
+    public Link(State nextState, EventWrapper sourceWrapper)
     {
         this.nextState = nextState;
         this.sourceWrapper = sourceWrapper;
@@ -24,7 +24,7 @@ public class Link : ILink
         sourceWrapper.Unsubscribe(OnSourceEventRaised);
     }
 
-    public void SetOutputListener(Action<IState> outputListener)
+    public void SetOutputListener(Action<State> outputListener)
     {
         this.outputListener = outputListener;
     }

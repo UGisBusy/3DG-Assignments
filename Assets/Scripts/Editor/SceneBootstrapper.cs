@@ -8,7 +8,7 @@ public class SceneBootstrapper
 {
     private const string keyLoadBootScene = "3DG/Load Boot Scene";
     private const string keyPreviousScene = "PreviousScene";
-    private const string BootScene = "Assets/Scenes/Boot.unity";
+    private const string BootScene = "Assets/Scenes/Game.unity";
 
     private static bool isLoadBootScene
     {

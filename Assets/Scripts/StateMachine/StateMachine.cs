@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class StateMachine
 {
-    public IState CurrentState { get; private set; }
+    public State CurrentState { get; private set; }
 
     public StateMachine()
     {
         CurrentState = null;
     }
 
-    public void EnterState(IState state)
+    public void EnterState(State state)
     {
         if (state == null)
         {
@@ -39,7 +39,7 @@ public class StateMachine
         CurrentState = null;
     }
 
-    private void OnStateTransition(IState nextState)
+    private void OnStateTransition(State nextState)
     {
         ExitState();
         EnterState(nextState);

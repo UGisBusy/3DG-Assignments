@@ -5,5 +5,5 @@ public interface ILink
 {
     void Enable();
     void Disable();
-    void SetOutputListener(Action<IState> outputListener);
+    void SetOutputListener(Action<State> outputListener);
 }
