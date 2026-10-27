@@ -1,11 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Places prefabs around this object's position when Play starts, using loops:
-/// a ring of fence posts, then rocks and trees at random spots that do not overlap.
-/// Attach to an empty GameObject at the crane's position (on top of your ground).
-/// </summary>
+
 public class EnvironmentBuilder : MonoBehaviour
 {
     [Header("Prefabs")]
