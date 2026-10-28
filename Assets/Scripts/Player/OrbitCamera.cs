@@ -7,10 +7,10 @@ public class OrbitCamera : MonoBehaviour
     Transform target;
 
     [SerializeField]
-    Vector3 offset = new Vector3(0, 3, -4);
+    Vector3 offset = new Vector3(0, 2.5f, -2);
 
     [SerializeField]
-    float xRot = 20;
+    float xRot = 30;
 
     [SerializeField]
     float mouseSensitivity = 0.2f;
