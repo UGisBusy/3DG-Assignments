@@ -1,28 +1,27 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Player))]
 [RequireComponent(typeof(PlayerMotor))]
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
     private InputActionReference moveAction;
 
-    [SerializeField]
-    private OrbitCamera orbitCamera;
-
     float topSpeed = 10f;
     float acceleration = 40f;
     float stopThreshold = 0.15f;
 
+    OrbitCamera orbitCamera;
     PlayerMotor motor;
     Vector3 moveVelocity;
 
     private void Awake()
     {
-        if (orbitCamera == null)
-            throw new System.NullReferenceException("player movement has no orbit camera");
-
         motor = GetComponent<PlayerMotor>();
+
+        Player player = GetComponent<Player>();
+        orbitCamera = player.OrbitCamera;
     }
 
     private void OnEnable()
@@ -55,6 +54,10 @@ public class PlayerMovement : MonoBehaviour
         if (hasInput)
             motor.FaceTowards(moveDirection);
     }
+
+    public void Enable() => enabled = true;
+
+    public void Disable() => enabled = false;
 
     private void Move(Vector3 moveDirection)
     {

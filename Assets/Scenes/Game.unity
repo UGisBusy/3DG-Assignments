@@ -308,8 +308,11 @@ GameObject:
   - component: {fileID: 1265147465}
   - component: {fileID: 1265147464}
   - component: {fileID: 1265147463}
+  - component: {fileID: 1265147470}
   - component: {fileID: 1265147462}
+  - component: {fileID: 1265147469}
   - component: {fileID: 1265147461}
+  - component: {fileID: 1265147468}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -342,7 +345,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveAction: {fileID: 6525993176048939041, guid: c2930215ce62ccc4587b4bab3c3eb92c, type: 3}
-  orbitCamera: {fileID: 2076022556}
 --- !u!54 &1265147463
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -466,6 +468,48 @@ Transform:
   - {fileID: 1297693064}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1265147468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1265147460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4759814201740b3478eaf5162e7ce989, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMotor
+  turnSpeed: 720
+--- !u!114 &1265147469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1265147460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8d5dece49413324682ee76e400a79ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
+  range: 2
+  arcAngle: 120
+  damage: 1
+  attackTime: 0.2
+--- !u!114 &1265147470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1265147460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fca239156f42fdb4a9e609f4632766a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
+  orbitCamera: {fileID: 2076022556}
 --- !u!1001 &1297693063
 PrefabInstance:
   m_ObjectHideFlags: 0
