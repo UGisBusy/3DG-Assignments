@@ -68,10 +68,10 @@ public class SequenceManager : MonoBehaviour
     {
         StartState = new State("Start", EnterStart, ExitStart);
         Level1State = new State("Level1", enter: EnterLevel1);
-        Level2State = new State("Level2");
-        Level3State = new State("Level3");
-        Level4State = new State("Level4");
-        Level5State = new State("Level5");
+        Level2State = new State("Level2", () => SequenceEvents.CompleteLevel1?.Invoke());
+        Level3State = new State("Level3", () => SequenceEvents.CompleteLevel2?.Invoke());
+        Level4State = new State("Level4", () => SequenceEvents.CompleteLevel3?.Invoke());
+        Level5State = new State("Level5", () => SequenceEvents.CompleteLevel4?.Invoke());
         WinState = new State("Win", EnterWin, ExitWin);
         LossState = new State("Loss", EnterLoss, ExitLoss);
     }
