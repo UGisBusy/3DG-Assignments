@@ -1,22 +1,9 @@
 using UnityEngine;
 
-public enum CollectibleType
+public class Collectible : AbstractCollectible
 {
-    Coin,
-}
-
-public abstract class Collectible : MonoBehaviour
-{
-    public CollectibleType Type => GetCollectibleType();
-
-    protected abstract CollectibleType GetCollectibleType();
-
-    private void OnTriggerEnter(Collider other)
+    protected override CollectibleType GetCollectibleType()
     {
-        if (!other.CompareTag("Player"))
-            return;
-
-        gameObject.SetActive(false);
-        GameplayEvents.ItemCollected?.Invoke(Type);
+        return CollectibleType.Collectible;
     }
 }
