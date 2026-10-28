@@ -31,7 +31,7 @@ public class Breakable : MonoBehaviour, IDamageable
     private void Break()
     {
         if (HasKey())
-            SpawnKey();
+            DropKey();
 
         Destroy(gameObject);
     }
@@ -41,7 +41,7 @@ public class Breakable : MonoBehaviour, IDamageable
         return sequenceManager.BreakableBoxKeyId == id;
     }
 
-    private void SpawnKey()
+    private void DropKey()
     {
         Instantiate(keyPrefab, transform.position, Quaternion.identity);
     }

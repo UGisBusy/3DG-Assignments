@@ -3,6 +3,9 @@ using UnityEngine;
 public class Monster : MonoBehaviour, IDamageable
 {
     [SerializeField]
+    private Collectible crystalPrefab;
+
+    [SerializeField]
     private int hp = 3;
 
     MonsterTurret turret;
@@ -12,6 +15,9 @@ public class Monster : MonoBehaviour, IDamageable
         turret = GetComponentInChildren<MonsterTurret>();
         if (turret == null)
             throw new System.NullReferenceException("Monster has no Turret");
+
+        if (crystalPrefab == null)
+            throw new System.NullReferenceException("Monster has no CrystalPrefab");
     }
 
     private void Start()
@@ -32,8 +38,14 @@ public class Monster : MonoBehaviour, IDamageable
     {
         hp = 0;
 
-        // TODO: drop heart, sound
+        // TODO: sound
         GameplayEvents.MonsterDied?.Invoke();
+        DropCrystal();
         Destroy(gameObject);
+    }
+
+    private void DropCrystal()
+    {
+        Instantiate(crystalPrefab, transform.position, Quaternion.identity);
     }
 }
