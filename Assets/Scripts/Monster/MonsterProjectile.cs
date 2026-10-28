@@ -5,17 +5,11 @@ public class MonsterProjectile : MonoBehaviour
 {
     GameObject owner;
     float speed = 4f;
-    float lifetime = 5f;
 
     public void Init(GameObject owner, float speed, float lifetime)
     {
         this.owner = owner;
         this.speed = speed;
-        this.lifetime = lifetime;
-    }
-
-    private void Awake()
-    {
         Destroy(gameObject, lifetime);
     }
 

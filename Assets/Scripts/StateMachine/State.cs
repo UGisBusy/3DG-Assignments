@@ -1,17 +1,19 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class State
 {
+    public string Name { get; }
+
     List<ILink> links;
     bool isTransitionEventBound;
 
     Action enter,
         exit;
 
-    public State(Action enter = null, Action exit = null)
+    public State(string name = "None", Action enter = null, Action exit = null)
     {
+        Name = name;
         links = new List<ILink>();
         isTransitionEventBound = false;
         this.enter = enter;

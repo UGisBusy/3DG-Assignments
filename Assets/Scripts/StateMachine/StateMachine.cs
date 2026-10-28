@@ -1,14 +1,14 @@
 using System;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class StateMachine
 {
     public State CurrentState { get; private set; }
+    Action<State> onEnterState;
 
-    public StateMachine()
+    public StateMachine(Action<State> onEnterState = null)
     {
         CurrentState = null;
+        this.onEnterState = onEnterState;
     }
 
     public void EnterState(State state)
@@ -26,6 +26,7 @@ public class StateMachine
         CurrentState = state;
         CurrentState.BindTransitionEvent(OnStateTransition);
         CurrentState.Enter();
+        onEnterState?.Invoke(state);
     }
 
     public void ExitState()

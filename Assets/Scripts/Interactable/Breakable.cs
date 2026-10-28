@@ -3,21 +3,25 @@ using UnityEngine;
 public class Breakable : MonoBehaviour, IDamageable
 {
     [SerializeField]
-    private SequenceManager sequenceManager;
-
-    [SerializeField]
     private Collectible keyPrefab;
 
     [SerializeField]
     private int id = 0;
 
+    [SerializeField]
+    private bool hasKey = false;
+
     private void Awake()
     {
-        if (sequenceManager == null)
-            throw new System.NullReferenceException("Breakable has no SequenceManager");
-
         if (keyPrefab == null)
             throw new System.NullReferenceException("Breakable has no KeyPrefab");
+
+        SequenceEvents.ResetKeyBoxId += OnResetKeyBoxId;
+    }
+
+    private void OnDestroy()
+    {
+        SequenceEvents.ResetKeyBoxId -= OnResetKeyBoxId;
     }
 
     public void GetDamaged(int amount, GameObject source)
@@ -30,19 +34,19 @@ public class Breakable : MonoBehaviour, IDamageable
 
     private void Break()
     {
-        if (HasKey())
+        if (hasKey)
             DropKey();
 
         Destroy(gameObject);
     }
 
-    private bool HasKey()
-    {
-        return sequenceManager.BreakableBoxKeyId == id;
-    }
-
     private void DropKey()
     {
         Instantiate(keyPrefab, transform.position, Quaternion.identity);
+    }
+
+    private void OnResetKeyBoxId(int keyId)
+    {
+        hasKey = (id == keyId);
     }
 }

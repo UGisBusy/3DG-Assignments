@@ -2,6 +2,11 @@ using System;
 
 public static class SequenceEvents
 {
-    public static Action StartGameplay;
-    public static Action ExitGameplay;
+    // State Transition
+    public static Action ProceedLevel;
+    public static Action Win;
+    public static Action Timeout;
+
+    // Generate new keybox
+    public static Action<int> ResetKeyBoxId;
 }
