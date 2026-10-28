@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 [DefaultExecutionOrder(-100)]
 public class SequenceManager : MonoBehaviour
 {
-    const int BOX_COUNT = 12;
+    const int BOX_COUNT = 32;
     const string GAME_SCENE = "Game";
 
     [Header("Debug")]
@@ -135,11 +135,9 @@ public class SequenceManager : MonoBehaviour
 
     private void OnGameSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // reset pickup count
         pickupCount = 0;
-
-        // reset key box id
         SequenceEvents.ResetKeyBoxId?.Invoke(Random.Range(0, BOX_COUNT));
+        GameplayEvents.ItemCollected += Level1TaskCheck;
 
         UIEvents.ShowGame?.Invoke();
     }
@@ -152,6 +150,7 @@ public class SequenceManager : MonoBehaviour
 
     private void ExitWin()
     {
+        GameplayEvents.ItemCollected -= Level1TaskCheck;
         UIEvents.HideWin?.Invoke();
     }
 
@@ -164,6 +163,12 @@ public class SequenceManager : MonoBehaviour
     private void ExitLoss()
     {
         UIEvents.HideLoss?.Invoke();
+    }
+
+    private void Level1TaskCheck(CollectibleType type)
+    {
+        if (pickupCount == 1)
+            SequenceEvents.CompleteLevel1?.Invoke();
     }
 
     private void ExitApp()
