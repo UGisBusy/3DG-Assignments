@@ -2,7 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-enum GateID
+public enum GateID
 {
     Lv1,
     Lv2,
@@ -16,7 +16,7 @@ public class Gate : MonoBehaviour
     private GateID id;
 
     EventWrapper openEW;
-    EventWrapper closeEW;
+    EventWrapper<GateID> closeEW;
     GateBlock block;
 
     private void Awake()
@@ -30,7 +30,7 @@ public class Gate : MonoBehaviour
         if (openEW != null)
             openEW.Subscribe(block.Open);
         if (closeEW != null)
-            closeEW.Subscribe(block.Close);
+            closeEW.Subscribe(Close);
     }
 
     private void OnDestroy()
@@ -38,15 +38,21 @@ public class Gate : MonoBehaviour
         if (openEW != null)
             openEW.Unsubscribe(block.Open);
         if (closeEW != null)
-            closeEW.Unsubscribe(block.Close);
+            closeEW.Unsubscribe(Close);
+    }
+
+    private void Close(GateID id)
+    {
+        if (this.id == id)
+            block.Close();
     }
 
     private void InitEventWrappers()
     {
-        closeEW = new EventWrapper
+        closeEW = new EventWrapper<GateID>
         {
-            Subscribe = h => SequenceEvents.ProceedLevel += h,
-            Unsubscribe = h => SequenceEvents.ProceedLevel -= h,
+            Subscribe = h => GameplayEvents.CloseGate += h,
+            Unsubscribe = h => GameplayEvents.CloseGate -= h,
         };
 
         switch (id)

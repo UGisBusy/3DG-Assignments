@@ -1,9 +1,18 @@
 using UnityEngine;
 
+public enum MonsterType
+{
+    Lv3,
+    Lv5,
+}
+
 public class Monster : MonoBehaviour, IDamageable
 {
     [SerializeField]
     private Collectible crystalPrefab;
+
+    [SerializeField]
+    private MonsterType type = MonsterType.Lv3;
 
     [SerializeField]
     private int hp = 3;
@@ -18,14 +27,28 @@ public class Monster : MonoBehaviour, IDamageable
 
         if (crystalPrefab == null)
             throw new System.NullReferenceException("Monster has no CrystalPrefab");
+
+        if (type == MonsterType.Lv3)
+            GameplayEvents.AwakeMonsterLevel3 += WakeUp;
+        if (type == MonsterType.Lv5)
+            GameplayEvents.AwakeMonsterLevel5 += WakeUp;
     }
 
-    private void Start()
+    private void OnDestroy()
     {
-        // TODO: start when player enter room
-        turret.StartTracking();
-        turret.StartShooting();
+        if (type == MonsterType.Lv3)
+            GameplayEvents.AwakeMonsterLevel3 -= WakeUp;
+        if (type == MonsterType.Lv5)
+            GameplayEvents.AwakeMonsterLevel5 -= WakeUp;
     }
+
+    private void WakeUp()
+    {
+        turret.StartTracking();
+        Invoke("StartShooting", Random.Range(0, 2));
+    }
+
+    private void StartShooting() => turret.StartShooting();
 
     public void GetDamaged(int amount, GameObject source)
     {

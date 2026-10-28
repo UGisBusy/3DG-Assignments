@@ -47,6 +47,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1324a7c57b1dc247a535aa7cfb124c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Monster
+  crystalPrefab: {fileID: 3019771614300038026, guid: 8d1812b7417e12a40a3c6668abced50d, type: 3}
+  type: 0
   hp: 3
 --- !u!65 &1945722273969621991
 BoxCollider:

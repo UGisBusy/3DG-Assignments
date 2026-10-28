@@ -67,11 +67,11 @@ public class SequenceManager : MonoBehaviour
     private void SetStates()
     {
         StartState = new State("Start", EnterStart, ExitStart);
-        Level1State = new State("Level1", enter: EnterLevel1);
-        Level2State = new State("Level2", () => SequenceEvents.CompleteLevel1?.Invoke());
-        Level3State = new State("Level3", () => SequenceEvents.CompleteLevel2?.Invoke());
-        Level4State = new State("Level4", () => SequenceEvents.CompleteLevel3?.Invoke());
-        Level5State = new State("Level5", () => SequenceEvents.CompleteLevel4?.Invoke());
+        Level1State = new State("Level1", EnterLevel1, ExitLevel1);
+        Level2State = new State("Level2", EnterLevel2);
+        Level3State = new State("Level3", EnterLevel3, ExitLevel3);
+        Level4State = new State("Level4", EnterLevel4);
+        Level5State = new State("Level5", EnterLevel5, ExitLevel5);
         WinState = new State("Win", EnterWin, ExitWin);
         LossState = new State("Loss", EnterLoss, ExitLoss);
     }
@@ -142,6 +142,49 @@ public class SequenceManager : MonoBehaviour
         UIEvents.ShowGame?.Invoke();
     }
 
+    private void ExitLevel1()
+    {
+        GameplayEvents.ItemCollected -= Level1TaskCheck;
+    }
+
+    private void EnterLevel2()
+    {
+        SequenceEvents.CompleteLevel2?.Invoke();
+        GameplayEvents.CloseGate?.Invoke(GateID.Lv1);
+    }
+
+    private void EnterLevel3()
+    {
+        pickupCount = 0;
+        GameplayEvents.ItemCollected += Level3TaskCheck;
+        GameplayEvents.AwakeMonsterLevel3?.Invoke();
+        GameplayEvents.CloseGate?.Invoke(GateID.Lv2);
+    }
+
+    private void ExitLevel3()
+    {
+        GameplayEvents.ItemCollected -= Level3TaskCheck;
+    }
+
+    private void EnterLevel4()
+    {
+        SequenceEvents.CompleteLevel4?.Invoke();
+        GameplayEvents.CloseGate?.Invoke(GateID.Lv3);
+    }
+
+    private void EnterLevel5()
+    {
+        pickupCount = 0;
+        GameplayEvents.ItemCollected += Level5TaskCheck;
+        GameplayEvents.AwakeMonsterLevel5?.Invoke();
+        GameplayEvents.CloseGate?.Invoke(GateID.Lv4);
+    }
+
+    private void ExitLevel5()
+    {
+        GameplayEvents.ItemCollected -= Level5TaskCheck;
+    }
+
     private void EnterWin()
     {
         UIEvents.HideGame?.Invoke();
@@ -150,7 +193,6 @@ public class SequenceManager : MonoBehaviour
 
     private void ExitWin()
     {
-        GameplayEvents.ItemCollected -= Level1TaskCheck;
         UIEvents.HideWin?.Invoke();
     }
 
@@ -169,6 +211,18 @@ public class SequenceManager : MonoBehaviour
     {
         if (pickupCount == 1)
             SequenceEvents.CompleteLevel1?.Invoke();
+    }
+
+    private void Level3TaskCheck(CollectibleType type)
+    {
+        if (pickupCount == 5)
+            SequenceEvents.CompleteLevel3?.Invoke();
+    }
+
+    private void Level5TaskCheck(CollectibleType type)
+    {
+        if (pickupCount == 9)
+            SequenceEvents.Win?.Invoke();
     }
 
     private void ExitApp()
