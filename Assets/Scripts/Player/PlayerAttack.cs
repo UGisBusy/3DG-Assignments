@@ -88,7 +88,8 @@ public class PlayerAttack : MonoBehaviour
 
     private void Sweep()
     {
-        Vector3 origin = transform.position;
+        Vector3 offset = new Vector3(0, -0.2f, 0);
+        Vector3 origin = transform.position + offset;
         Collider[] hits = Physics.OverlapSphere(origin, range);
         HashSet<IDamageable> targets = new HashSet<IDamageable>();
 
@@ -126,7 +127,8 @@ public class PlayerAttack : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         const int segments = 16;
-        Vector3 origin = transform.position;
+        Vector3 offset = new Vector3(0, -0.2f, 0);
+        Vector3 origin = transform.position + offset;
         Gizmos.color = Color.red;
 
         Vector3 previous = origin;
