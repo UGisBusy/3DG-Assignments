@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3849349376192356872}
+  - component: {fileID: 7527198249176059286}
+  - component: {fileID: 1945722273969621991}
   m_Layer: 0
   m_Name: Monster
   m_TagString: Untagged
@@ -33,6 +35,40 @@ Transform:
   - {fileID: 8668331889653532979}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7527198249176059286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330382745945110511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1324a7c57b1dc247a535aa7cfb124c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Monster
+  hp: 3
+--- !u!65 &1945722273969621991
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330382745945110511}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4355163701907655104
 GameObject:
   m_ObjectHideFlags: 0
@@ -44,6 +80,7 @@ GameObject:
   - component: {fileID: 8668331889653532979}
   - component: {fileID: 8937073627695408340}
   - component: {fileID: 454887206852190377}
+  - component: {fileID: 3198530902640129679}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -124,6 +161,25 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &3198530902640129679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4355163701907655104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f163d1cbd03a7014289a67caf6e20a97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterTurret
+  target: {fileID: 8411253257664235255, guid: 9bc94d51ceb0ef149a2b8391deaefc31, type: 3}
+  projectilePrefab: {fileID: 3097269015619909493, guid: f715af9e60b290c4f94df8cdb3c03119, type: 3}
+  cooldown: 2
+  projectileSpeed: 8
+  projectileLifetime: 4
+  aimHeight: 1.15
+  isTracking: 0
 --- !u!1 &5316087099852651861
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,7 +191,6 @@ GameObject:
   - component: {fileID: 4996118661131795635}
   - component: {fileID: 6414964052883600369}
   - component: {fileID: 1730451794290031466}
-  - component: {fileID: 9136975467840070548}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -215,27 +270,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &9136975467840070548
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5316087099852651861}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7165155163655867221
 GameObject:
   m_ObjectHideFlags: 0

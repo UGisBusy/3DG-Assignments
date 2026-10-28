@@ -3,24 +3,22 @@ using UnityEngine;
 public class Monster : MonoBehaviour, IDamageable
 {
     [SerializeField]
-    private Transform playerTransform;
-
-    [SerializeField]
     private int hp = 3;
 
     MonsterTurret turret;
 
     private void Awake()
     {
-        if (playerTransform == null)
-            throw new System.NullReferenceException("Monster has no PlayerTransform");
-
         turret = GetComponentInChildren<MonsterTurret>();
         if (turret == null)
             throw new System.NullReferenceException("Monster has no Turret");
+    }
 
-        // TODO
-        turret.StartTracking(playerTransform);
+    private void Start()
+    {
+        // TODO: start when player enter room
+        turret.StartTracking();
+        turret.StartShooting();
     }
 
     public void GetDamaged(int amount, GameObject source)
