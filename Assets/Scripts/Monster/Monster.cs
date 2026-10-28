@@ -1,9 +1,12 @@
 using UnityEngine;
 
-public class Monster : MonoBehaviour
+public class Monster : MonoBehaviour, IDamageable
 {
     [SerializeField]
     private Transform playerTransform;
+
+    [SerializeField]
+    private int hp = 3;
 
     MonsterTurret turret;
 
@@ -18,5 +21,21 @@ public class Monster : MonoBehaviour
 
         // TODO
         turret.StartTracking(playerTransform);
+    }
+
+    public void GetDamaged(int amount, GameObject source)
+    {
+        hp -= amount;
+        if (hp <= 0)
+            Die();
+    }
+
+    private void Die()
+    {
+        hp = 0;
+
+        // TODO: drop heart, sound
+        GameplayEvents.MonsterDied?.Invoke();
+        Destroy(gameObject);
     }
 }

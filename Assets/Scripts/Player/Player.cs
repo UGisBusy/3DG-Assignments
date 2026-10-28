@@ -13,9 +13,8 @@ public class Player : MonoBehaviour, IDamageable
             throw new System.NullReferenceException("player has no orbit camera");
     }
 
-    public bool GetDamaged(int amount, GameObject source)
+    public void GetDamaged(int amount, GameObject source)
     {
         // TODO
-        return true;
     }
 }
