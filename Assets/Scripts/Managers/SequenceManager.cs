@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class SequenceManager : MonoBehaviour
 {
+    [SerializeField]
+    private int breakableBoxKeyId = 0;
+
+    public int BreakableBoxKeyId => breakableBoxKeyId;
+
     static SequenceManager instance;
 
     StateMachine stateMachine;
@@ -17,17 +22,12 @@ public class SequenceManager : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+
+        stateMachine = new StateMachine();
     }
 
     public void Start()
     {
-        Init();
-    }
-
-    private void Init()
-    {
-        stateMachine = new StateMachine();
-
         SetStates();
         SetLinks();
     }
