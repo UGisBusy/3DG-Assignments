@@ -66,14 +66,14 @@ public class SequenceManager : MonoBehaviour
 
     private void SetStates()
     {
-        StartState = new State("Start");
+        StartState = new State("Start", EnterStart, ExitStart);
         Level1State = new State("Level1", enter: EnterLevel1);
         Level2State = new State("Level2");
         Level3State = new State("Level3");
         Level4State = new State("Level4");
         Level5State = new State("Level5");
-        WinState = new State("Win");
-        LossState = new State("Loss");
+        WinState = new State("Win", EnterWin, ExitWin);
+        LossState = new State("Loss", EnterLoss, ExitLoss);
     }
 
     private void SetLinks()
@@ -117,6 +117,17 @@ public class SequenceManager : MonoBehaviour
         Level5State.AddLink(new Link(LossState, timeoutEW));
     }
 
+    private void EnterStart()
+    {
+        UIEvents.HideGame?.Invoke();
+        UIEvents.ShowIntro?.Invoke();
+    }
+
+    private void ExitStart()
+    {
+        UIEvents.HideIntro?.Invoke();
+    }
+
     private void EnterLevel1()
     {
         SceneManager.LoadScene(GAME_SCENE);
@@ -129,6 +140,30 @@ public class SequenceManager : MonoBehaviour
 
         // reset key box id
         SequenceEvents.ResetKeyBoxId?.Invoke(Random.Range(0, BOX_COUNT));
+
+        UIEvents.ShowGame?.Invoke();
+    }
+
+    private void EnterWin()
+    {
+        UIEvents.HideGame?.Invoke();
+        UIEvents.ShowWin?.Invoke();
+    }
+
+    private void ExitWin()
+    {
+        UIEvents.HideWin?.Invoke();
+    }
+
+    private void EnterLoss()
+    {
+        UIEvents.HideGame?.Invoke();
+        UIEvents.ShowLoss?.Invoke();
+    }
+
+    private void ExitLoss()
+    {
+        UIEvents.HideLoss?.Invoke();
     }
 
     private void ExitApp()
