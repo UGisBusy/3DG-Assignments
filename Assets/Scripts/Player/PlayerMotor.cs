@@ -7,9 +7,15 @@ using UnityEngine;
 public class PlayerMotor : MonoBehaviour
 {
     [SerializeField]
-    float turnSpeed = 720f; // degrees per second
+    float turnSpeed = 720f;
+
+    [SerializeField]
+    float edgeProbeDistance = 0.3f;
+
+    const float PROBE_HEIGHT = 0.25f;
 
     Rigidbody rb;
+    CapsuleCollider capsule;
     Vector3 moveVelocity;
     Vector3 faceDirection;
 
@@ -30,7 +36,8 @@ public class PlayerMotor : MonoBehaviour
         rb.freezeRotation = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        GetComponent<CapsuleCollider>().material = new PhysicsMaterial
+        capsule = GetComponent<CapsuleCollider>();
+        capsule.material = new PhysicsMaterial
         {
             dynamicFriction = 0f,
             staticFriction = 0f,
@@ -48,7 +55,37 @@ public class PlayerMotor : MonoBehaviour
 
     private void ApplyVelocity()
     {
-        rb.linearVelocity = new Vector3(moveVelocity.x, rb.linearVelocity.y, moveVelocity.z);
+        Vector3 velocity = BlockEdges(moveVelocity);
+        rb.linearVelocity = new Vector3(velocity.x, rb.linearVelocity.y, velocity.z);
+    }
+
+    private Vector3 BlockEdges(Vector3 velocity)
+    {
+        if (!HasGroundAt(new Vector3(velocity.x, 0f, 0f)))
+            velocity.x = 0f;
+        if (!HasGroundAt(new Vector3(0f, 0f, velocity.z)))
+            velocity.z = 0f;
+        return velocity;
+    }
+
+    private bool HasGroundAt(Vector3 direction)
+    {
+        if (direction.sqrMagnitude < 0.0001f)
+            return true;
+
+        Vector3 feet = new Vector3(rb.position.x, capsule.bounds.min.y, rb.position.z);
+        Vector3 origin =
+            feet
+            + Vector3.up * PROBE_HEIGHT
+            + direction.normalized * (capsule.radius + edgeProbeDistance);
+
+        return Physics.Raycast(
+            origin,
+            Vector3.down,
+            PROBE_HEIGHT * 2f,
+            ~0,
+            QueryTriggerInteraction.Ignore
+        );
     }
 
     private void ApplyFacing(float dt)
