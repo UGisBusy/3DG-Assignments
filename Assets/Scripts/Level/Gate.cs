@@ -2,7 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public enum GateID
+public enum GateId
 {
     Lv1,
     Lv2,
@@ -13,10 +13,10 @@ public enum GateID
 public class Gate : MonoBehaviour
 {
     [SerializeField]
-    private GateID id;
+    private GateId id;
 
     EventWrapper openEW;
-    EventWrapper<GateID> closeEW;
+    EventWrapper<GateId> closeEW;
     GateBlock block;
 
     private void Awake()
@@ -41,7 +41,7 @@ public class Gate : MonoBehaviour
             closeEW.Unsubscribe(Close);
     }
 
-    private void Close(GateID id)
+    private void Close(GateId id)
     {
         if (this.id == id)
             block.Close();
@@ -49,7 +49,7 @@ public class Gate : MonoBehaviour
 
     private void InitEventWrappers()
     {
-        closeEW = new EventWrapper<GateID>
+        closeEW = new EventWrapper<GateId>
         {
             Subscribe = h => GameplayEvents.CloseGate += h,
             Unsubscribe = h => GameplayEvents.CloseGate -= h,
@@ -57,28 +57,28 @@ public class Gate : MonoBehaviour
 
         switch (id)
         {
-            case GateID.Lv1:
+            case GateId.Lv1:
                 openEW = new EventWrapper
                 {
                     Subscribe = h => SequenceEvents.CompleteLevel1 += h,
                     Unsubscribe = h => SequenceEvents.CompleteLevel1 -= h,
                 };
                 break;
-            case GateID.Lv2:
+            case GateId.Lv2:
                 openEW = new EventWrapper
                 {
                     Subscribe = h => SequenceEvents.CompleteLevel2 += h,
                     Unsubscribe = h => SequenceEvents.CompleteLevel2 -= h,
                 };
                 break;
-            case GateID.Lv3:
+            case GateId.Lv3:
                 openEW = new EventWrapper
                 {
                     Subscribe = h => SequenceEvents.CompleteLevel3 += h,
                     Unsubscribe = h => SequenceEvents.CompleteLevel3 -= h,
                 };
                 break;
-            case GateID.Lv4:
+            case GateId.Lv4:
                 openEW = new EventWrapper
                 {
                     Subscribe = h => SequenceEvents.CompleteLevel4 += h,

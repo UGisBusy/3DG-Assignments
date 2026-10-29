@@ -7,7 +7,6 @@ public static class SequenceEvents
     public static Action Win;
     public static Action Timeout;
 
-    // Generate new keybox
     public static Action<int> ResetKeyBoxId;
 
     // complete levels (finish task)
