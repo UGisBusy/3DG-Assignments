@@ -50,7 +50,29 @@ public class SequenceManager : MonoBehaviour
 
         SceneManager.sceneLoaded += OnGameSceneLoaded;
 
-        GameplayEvents.ItemCollected += _ => pickupCount++;
+        GameplayEvents.ItemCollected += CountPickup;
+    }
+
+    private void OnDestroy()
+    {
+        if (instance != this)
+            return;
+
+        instance = null;
+
+        SceneManager.sceneLoaded -= OnGameSceneLoaded;
+        GameplayEvents.ItemCollected -= CountPickup;
+        GameplayEvents.ItemCollected -= Level1TaskCheck;
+        GameplayEvents.ItemCollected -= Level3TaskCheck;
+        GameplayEvents.ItemCollected -= Level5TaskCheck;
+
+        ExitAction?.Disable();
+        ExitAction?.Dispose();
+    }
+
+    private void CountPickup(CollectibleType type)
+    {
+        pickupCount++;
     }
 
     private void Start()
@@ -137,6 +159,8 @@ public class SequenceManager : MonoBehaviour
     {
         pickupCount = 0;
         SequenceEvents.ResetKeyBoxId?.Invoke(Random.Range(0, BOX_COUNT));
+        // remove first so the handler is never subscribed more than once
+        GameplayEvents.ItemCollected -= Level1TaskCheck;
         GameplayEvents.ItemCollected += Level1TaskCheck;
 
         UIEvents.ShowGame?.Invoke();

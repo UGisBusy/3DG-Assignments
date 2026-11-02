@@ -5,7 +5,6 @@ public static class GameplayEvents
     public static Action<CollectibleType> ItemCollected;
     public static Action<BridgeId> LeverTriggered;
     public static Action MonsterDied;
-
     public static Action PlayerHurt;
 
 
