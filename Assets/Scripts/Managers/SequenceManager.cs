@@ -140,6 +140,7 @@ public class SequenceManager : MonoBehaviour
         GameplayEvents.ItemCollected += Level1TaskCheck;
 
         UIEvents.ShowGame?.Invoke();
+        GameplayEvents.StartTimer?.Invoke();
     }
 
     private void ExitLevel1()

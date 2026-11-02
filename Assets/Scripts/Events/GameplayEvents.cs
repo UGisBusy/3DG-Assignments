@@ -6,8 +6,13 @@ public static class GameplayEvents
     public static Action<BridgeId> LeverTriggered;
     public static Action MonsterDied;
 
+    public static Action PlayerHurt;
+
+
     public static Action AwakeMonsterLevel3;
     public static Action AwakeMonsterLevel5;
 
     public static Action<GateId> CloseGate;
+
+    public static Action StartTimer;
 }

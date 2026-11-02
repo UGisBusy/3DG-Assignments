@@ -15,7 +15,6 @@ public class Player : MonoBehaviour, IDamageable
 
     public void GetDamaged(int amount, GameObject source)
     {
-        // TODO
-        Debug.Log("Player hurt");
+        GameplayEvents.PlayerHurt?.Invoke();
     }
 }
