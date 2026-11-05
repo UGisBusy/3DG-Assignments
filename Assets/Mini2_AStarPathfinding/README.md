@@ -21,7 +21,7 @@ Select **Grid** in the Hierarchy during Play to see the blocked cells (red) in t
 | `PathFollower` | Runs A* from the character's cell to the clicked cell, turns the cells into waypoints and walks them at `speed`. Turns with `RotateTowards` (`turnSpeed` deg/s) and walks slower while it is still turning. | Character |
 | `PathVisualizer` | Places a sphere every `spacing` (0.6 m) along the path, so the number of spheres depends on the path length. Spheres are reused and hidden once the character passes them. | PathVisualizer |
 | `WalkAnimator` | Code-driven walk: hips and shoulders swing with `sin(phase)`, legs and arms in opposite phase, plus a small body bob. The phase advances with the measured speed (`speed / strideLength`), and the swing fades in or out when walking starts or stops. | Character |
-| `EnvironmentBuilder` | On Play, builds 6 wall segments and scatters 35 rocks and 25 trees in loops at random spots that do not overlap each other, the walls, or the start area. | Environment |
+| `EnvironmentBuilder` | On Play, builds 6 wall segments and scatters 35 rocks and 25 trees in loops at random spots that do not overlap each other, the walls, or the start area. After each rock / tree it re-bakes the grid and flood-fills from the start cell. If any part of the map became unreachable, that object is removed and another spot is tried, so a passage is never fully blocked. | Environment |
 
 ## How A* works here
 
@@ -67,4 +67,4 @@ Character                 PathFollower, ClickToMove, WalkAnimator, start (0, 0, 
 ## New vs reused
 
 - **New for this exercise:** `GridMap`, `AStar`, `PathFollower`, `PathVisualizer`, `ClickToMove`, `WalkAnimator`, the primitive character.
-- **Reused from mini-1:** `EnvironmentBuilder` (changed: square area, wall segments, keep-clear checks against walls), and the Rock / Tree prefabs with their materials (kept at `Assets/Mini1_HierarchicalCrane/`).
+- **Reused from mini-1:** `EnvironmentBuilder` (changed: square area, wall segments, keep-clear checks against walls, rejects objects that cut off part of the map), and the Rock / Tree prefabs with their materials (kept at `Assets/Mini1_HierarchicalCrane/`).

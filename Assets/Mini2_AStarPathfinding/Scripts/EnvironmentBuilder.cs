@@ -48,15 +48,31 @@ namespace Mini2
         public Vector2 treeScale = new Vector2(1.5f, 2.5f);
         public float treeRadius = 0.5f;
 
+        [Header("Path check")]
+        [Tooltip("Used to reject rocks / trees that would cut off part of the map. Found automatically if empty.")]
+        public GridMap grid;
+        public int triesPerObject = 5;
+
         System.Random rng;
         readonly List<Vector3> occupied = new List<Vector3>(); // (x, z, radius) of placed objects
+        Vector2Int startCell;
+        int unreachable; // walkable cells the character cannot reach, must never go up
 
         void Awake()
         {
             rng = new System.Random((int)System.DateTime.Now.Ticks);
             occupied.Add(new Vector3(keepClear.x, keepClear.y, keepClearRadius));
+            if (grid == null) grid = FindFirstObjectByType<GridMap>();
 
             BuildWalls();
+
+            if (grid != null)
+            {
+                startCell = grid.WorldToCell(transform.TransformPoint(new Vector3(keepClear.x, 0f, keepClear.y)));
+                grid.Bake();
+                unreachable = grid.CountUnreachable(startCell);
+            }
+
             Scatter(rockPrefab, "Rocks", rocks, rockScale, rockRadius);
             Scatter(treePrefab, "Trees", trees, treeScale, treeRadius);
         }
@@ -90,13 +106,34 @@ namespace Mini2
 
             for (int i = 0; i < count; i++)
             {
-                float scale = Rand(scaleRange.x, scaleRange.y);
-                if (!FindFreeSpot(radius * scale, out Vector3 pos)) continue;
-                Place(prefab, parent, $"{prefab.name}_{i:00}", pos, Rand(0f, 360f), scale);
+                for (int attempt = 0; attempt < triesPerObject; attempt++)
+                {
+                    float scale = Rand(scaleRange.x, scaleRange.y);
+                    if (!FindFreeSpot(radius * scale, out Vector3 pos)) break;
+
+                    var go = Place(prefab, parent, $"{prefab.name}_{i:00}", pos, Rand(0f, 360f), scale);
+                    if (KeepsMapConnected()) break;
+
+                    // it walled something off: remove it and try another spot
+                    go.SetActive(false); // takes its colliders out of physics right away
+                    Destroy(go);
+                    occupied.RemoveAt(occupied.Count - 1);
+                }
             }
         }
 
-        void Place(GameObject prefab, Transform parent, string name, Vector3 pos, float yaw, float scale)
+        // Re-bakes the grid and checks that no extra cells became unreachable from the start.
+        bool KeepsMapConnected()
+        {
+            if (grid == null) return true;
+            grid.Bake();
+            int now = grid.CountUnreachable(startCell);
+            if (now > unreachable) return false;
+            unreachable = now;
+            return true;
+        }
+
+        GameObject Place(GameObject prefab, Transform parent, string name, Vector3 pos, float yaw, float scale)
         {
             var go = Instantiate(prefab, parent);
             go.name = name;
@@ -105,6 +142,7 @@ namespace Mini2
                 new Vector3(pos.x, p.localPosition.y * scale, pos.z),
                 Quaternion.Euler(0f, yaw, 0f) * p.localRotation);
             go.transform.localScale = p.localScale * scale;
+            return go;
         }
 
         float Rand(float min, float max)

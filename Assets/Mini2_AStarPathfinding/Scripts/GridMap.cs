@@ -20,6 +20,8 @@ namespace Mini2
 
         bool[,] walkable;
 
+        static readonly Vector2Int[] Directions4 = { Vector2Int.right, Vector2Int.left, Vector2Int.up, Vector2Int.down };
+
         public bool IsBaked => walkable != null;
 
         // Runs after every Awake, so the obstacles from EnvironmentBuilder already exist.
@@ -71,6 +73,38 @@ namespace Mini2
         public Vector3 CellToWorld(Vector2Int c)
         {
             return Origin + new Vector3((c.x + 0.5f) * cellSize, 0f, (c.y + 0.5f) * cellSize);
+        }
+
+        // Number of walkable cells that cannot be reached from `from` (flood fill).
+        // 4-direction fill is enough: A* only steps diagonally when both side cells are free.
+        public int CountUnreachable(Vector2Int from)
+        {
+            int walkableCount = 0;
+            for (int x = 0; x < size.x; x++)
+                for (int z = 0; z < size.y; z++)
+                    if (walkable[x, z]) walkableCount++;
+
+            if (!IsWalkable(from)) return walkableCount;
+
+            var visited = new bool[size.x, size.y];
+            var stack = new System.Collections.Generic.Stack<Vector2Int>();
+            stack.Push(from);
+            visited[from.x, from.y] = true;
+            int reached = 0;
+
+            while (stack.Count > 0)
+            {
+                Vector2Int c = stack.Pop();
+                reached++;
+                foreach (var d in Directions4)
+                {
+                    Vector2Int n = c + d;
+                    if (!IsWalkable(n) || visited[n.x, n.y]) continue;
+                    visited[n.x, n.y] = true;
+                    stack.Push(n);
+                }
+            }
+            return walkableCount - reached;
         }
 
         // Closest walkable cell, searching outward in square rings. Returns false if none.
