@@ -5,7 +5,7 @@ The path is shown as a line of small yellow spheres, with a red sphere at the ta
 
 ## Setup
 
-1. Open `Mini2_AStarPathfinding.unity` in this folder and press **Play**.
+1. Open the project. `Mini2_AStarPathfinding.unity` opens automatically (editor script `Editor/OpenMini2SceneOnLoad.cs`). If it does not, open it from this folder. Press **Play**.
 2. **Left-click** anywhere on the floor. Click again at any time to change the target while the character is walking.
 
 The status line in the top-left shows the last search: cells on the path, path length, number of spheres and search time.
