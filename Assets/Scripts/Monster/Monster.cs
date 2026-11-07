@@ -67,6 +67,7 @@ public class Monster : MonoBehaviour, IDamageable
 
         hp -= amount;
         healthBar.SetRatio((float)hp / maxHp);
+        GameplayEvents.TargetHit?.Invoke();
 
         if (hp <= 0)
             Die();
@@ -76,7 +77,6 @@ public class Monster : MonoBehaviour, IDamageable
     {
         hp = 0;
 
-        // TODO: sound
         GameplayEvents.MonsterDied?.Invoke();
         DropCrystal();
         Destroy(gameObject);

@@ -29,6 +29,7 @@ public class Breakable : MonoBehaviour, IDamageable
         if (!source.CompareTag("Player"))
             return;
 
+        GameplayEvents.TargetHit?.Invoke();
         Break();
     }
 

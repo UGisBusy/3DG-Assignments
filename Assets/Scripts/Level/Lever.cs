@@ -45,6 +45,8 @@ public class Lever : MonoBehaviour, IDamageable
         if (!source.CompareTag("Player"))
             return;
 
+        GameplayEvents.TargetHit?.Invoke();
+
         if (code == BridgeId.None)
             return;
 

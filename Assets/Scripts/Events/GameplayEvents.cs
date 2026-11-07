@@ -4,6 +4,8 @@ public static class GameplayEvents
 {
     public static Action<CollectibleType> ItemCollected;
     public static Action<BridgeId> LeverTriggered;
+    // player's attack landed on something (monster, box, lever); used for the hit sound
+    public static Action TargetHit;
     public static Action MonsterDied;
     public static Action PlayerHurt;
 
