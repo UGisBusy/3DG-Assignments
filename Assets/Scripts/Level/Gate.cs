@@ -25,6 +25,9 @@ public class Gate : MonoBehaviour
         if (block == null)
             throw new System.NullReferenceException("Gate has no GateBlock");
 
+        // gates mark each level's puzzle goal on the minimap
+        MinimapIcon.Attach(gameObject, MinimapIconShape.Diamond, new Color(1f, 0.85f, 0.2f), size: 3f, sortingOrder: 2);
+
         InitEventWrappers();
 
         if (openEW != null)

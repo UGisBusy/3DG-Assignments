@@ -19,6 +19,9 @@ public class Player : MonoBehaviour, IDamageable
     {
         if (orbitCamera == null)
             throw new System.NullReferenceException("player has no orbit camera");
+
+        // arrow on top of every other icon, pointing where the player faces
+        MinimapIcon.Attach(gameObject, MinimapIconShape.Arrow, new Color(0.2f, 0.6f, 1f), size: 3f, sortingOrder: 10);
     }
 
     public void GetDamaged(int amount, GameObject source)

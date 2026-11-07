@@ -74,6 +74,11 @@ public class MonsterHealthBar : MonoBehaviour
         // fill anchored to the left; SetRatio moves its right edge
         fill = CreateImage("Fill", fillArea, fillColor);
         Stretch(fill, 0f);
+
+        // UI layer keeps the bar off the minimap
+        int uiLayer = LayerMask.NameToLayer("UI");
+        foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
+            t.gameObject.layer = uiLayer;
     }
 
     private static RectTransform CreateImage(string name, Transform parent, Color color)

@@ -30,6 +30,8 @@ public class Monster : MonoBehaviour, IDamageable
         if (healthBar == null)
             healthBar = gameObject.AddComponent<MonsterHealthBar>();
 
+        MinimapIcon.Attach(gameObject, MinimapIconShape.Circle, new Color(0.9f, 0.2f, 0.2f), size: 2f, sortingOrder: 1);
+
         turret = GetComponentInChildren<MonsterTurret>();
         if (turret == null)
             throw new System.NullReferenceException("Monster has no Turret");

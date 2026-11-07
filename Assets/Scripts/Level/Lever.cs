@@ -35,6 +35,9 @@ public class Lever : MonoBehaviour, IDamageable
     public void Awake()
     {
         code = BridgeCodes.TryGetValue(id, out BridgeId c) ? c : BridgeId.None;
+
+        // levers are puzzle switches in levels 4 and 5
+        MinimapIcon.Attach(gameObject, MinimapIconShape.Diamond, new Color(1f, 0.55f, 0.1f), size: 2f, sortingOrder: 2);
     }
 
     public void GetDamaged(int amount, GameObject source)
