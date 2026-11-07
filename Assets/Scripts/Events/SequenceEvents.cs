@@ -17,4 +17,7 @@ public static class SequenceEvents
 
     // fired once at the moment each of the 5 puzzles is actually solved (used for scoring)
     public static Action PuzzleSolved;
+
+    // fired when the player enters a level (1-5)
+    public static Action<int> LevelStarted;
 }

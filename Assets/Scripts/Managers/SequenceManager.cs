@@ -181,6 +181,7 @@ public class SequenceManager : MonoBehaviour
 
         UIEvents.ShowGame?.Invoke();
         GameplayEvents.StartTimer?.Invoke();
+        SequenceEvents.LevelStarted?.Invoke(1);
     }
 
     private void ExitLevel1()
@@ -192,6 +193,7 @@ public class SequenceManager : MonoBehaviour
     {
         SequenceEvents.CompleteLevel2?.Invoke();
         GameplayEvents.CloseGate?.Invoke(GateId.Lv1);
+        SequenceEvents.LevelStarted?.Invoke(2);
     }
 
     private void EnterLevel3()
@@ -203,6 +205,7 @@ public class SequenceManager : MonoBehaviour
         GameplayEvents.ItemCollected += Level3TaskCheck;
         GameplayEvents.AwakeMonsterLevel3?.Invoke();
         GameplayEvents.CloseGate?.Invoke(GateId.Lv2);
+        SequenceEvents.LevelStarted?.Invoke(3);
     }
 
     private void ExitLevel3()
@@ -214,6 +217,7 @@ public class SequenceManager : MonoBehaviour
     {
         SequenceEvents.CompleteLevel4?.Invoke();
         GameplayEvents.CloseGate?.Invoke(GateId.Lv3);
+        SequenceEvents.LevelStarted?.Invoke(4);
     }
 
     private void EnterLevel5()
@@ -225,6 +229,7 @@ public class SequenceManager : MonoBehaviour
         GameplayEvents.ItemCollected += Level5TaskCheck;
         GameplayEvents.AwakeMonsterLevel5?.Invoke();
         GameplayEvents.CloseGate?.Invoke(GateId.Lv4);
+        SequenceEvents.LevelStarted?.Invoke(5);
     }
 
     private void ExitLevel5()
