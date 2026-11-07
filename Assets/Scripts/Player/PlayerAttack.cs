@@ -25,6 +25,7 @@ public class PlayerAttack : MonoBehaviour
     OrbitCamera orbitCamera;
     PlayerMotor motor;
     PlayerMovement movement;
+    AttackArcVisual arcVisual;
     InputAction attackAction;
     Vector3 attackDirection;
     bool isAttacking;
@@ -37,6 +38,11 @@ public class PlayerAttack : MonoBehaviour
 
         Player player = GetComponent<Player>();
         orbitCamera = player.OrbitCamera;
+
+        // use the one on the player if set up (to tweak its look), otherwise add a default one
+        arcVisual = GetComponent<AttackArcVisual>();
+        if (arcVisual == null)
+            arcVisual = gameObject.AddComponent<AttackArcVisual>();
 
         attackAction = new InputAction(name: "PlayerAttack", binding: "<Mouse>/leftButton");
         attackAction.performed += OnAttack;
@@ -80,6 +86,7 @@ public class PlayerAttack : MonoBehaviour
         attackDirection = orbitCamera.PlanarForward;
         motor.FaceTowards(attackDirection);
         Sweep();
+        arcVisual.Show(range, arcAngle, attackDirection); // show the area the sweep covered
         yield return new WaitForSeconds(attackTime);
 
         isAttacking = false;

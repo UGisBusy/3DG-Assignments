@@ -3894,7 +3894,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Timer
   uiText: {fileID: 557954703}
   InitialstartTime: 300
-  penalty: 5
+  penalty: 20
   timeLeft: 0
   barFill: {fileID: 1149636450}
   barColor:
@@ -15668,12 +15668,12 @@ MonoBehaviour:
   objectives:
   - Break the boxes and find the key.
   - Find your way through the maze.
-  - Defeat the 5 monsters and collect their crystals.
+  - Defeat the 5 monsters and collect their hearts.
   - Hit the levers to raise all 4 platforms, then cross the bridge.
   - 'Hit the corner levers to reach the center.
 
     Defeat all 9 monsters and collect
-    their crystals.'
+    their hearts.'
   levelCompleteText: Gate open! Go to the next level.
 --- !u!4 &1574428130
 Transform:
