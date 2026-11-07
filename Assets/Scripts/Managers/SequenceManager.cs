@@ -196,6 +196,9 @@ public class SequenceManager : MonoBehaviour
 
     private void EnterLevel3()
     {
+        // reaching level 3's checkpoint means the maze (puzzle 2) is done
+        SequenceEvents.PuzzleSolved?.Invoke();
+
         pickupCount = 0;
         GameplayEvents.ItemCollected += Level3TaskCheck;
         GameplayEvents.AwakeMonsterLevel3?.Invoke();
@@ -215,6 +218,9 @@ public class SequenceManager : MonoBehaviour
 
     private void EnterLevel5()
     {
+        // reaching level 5's checkpoint means the bridge was crossed (puzzle 4 done)
+        SequenceEvents.PuzzleSolved?.Invoke();
+
         pickupCount = 0;
         GameplayEvents.ItemCollected += Level5TaskCheck;
         GameplayEvents.AwakeMonsterLevel5?.Invoke();
@@ -251,19 +257,29 @@ public class SequenceManager : MonoBehaviour
     private void Level1TaskCheck(CollectibleType type)
     {
         if (pickupCount == 1)
+        {
+            SequenceEvents.PuzzleSolved?.Invoke();
             SequenceEvents.CompleteLevel1?.Invoke();
+        }
     }
 
     private void Level3TaskCheck(CollectibleType type)
     {
         if (pickupCount == 5)
+        {
+            SequenceEvents.PuzzleSolved?.Invoke();
             SequenceEvents.CompleteLevel3?.Invoke();
+        }
     }
 
     private void Level5TaskCheck(CollectibleType type)
     {
         if (pickupCount == 9)
+        {
+            // score before Win so the final score is in place when the win screen shows
+            SequenceEvents.PuzzleSolved?.Invoke();
             SequenceEvents.Win?.Invoke();
+        }
     }
 
     private void ExitApp()

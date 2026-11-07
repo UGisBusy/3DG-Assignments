@@ -3839,6 +3839,9 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
+  shakeTarget: {fileID: 0}
+  shakeDuration: 0.3
+  shakeStrength: 8
 --- !u!4 &431237270
 Transform:
   m_ObjectHideFlags: 0
@@ -7093,6 +7096,54 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5030012440494092864, guid: dbefdfe42ba13674e8483e07dd45c4b8, type: 3}
   m_PrefabInstance: {fileID: 739381961}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &742336941
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 742336943}
+  - component: {fileID: 742336942}
+  m_Layer: 0
+  m_Name: ScoreSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &742336942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742336941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90efd28338a7b864d8fefd974e573ce9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreSystem
+  uiText: {fileID: 445787187}
+  score: 0
+  monsterScore: 100
+  puzzleScore: 200
+--- !u!4 &742336943
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742336941}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &744364710
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20005,6 +20056,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   orbitCamera: {fileID: 2076022556}
+  invincibleDuration: 1
 --- !u!4 &1103158663164532820
 Transform:
   m_ObjectHideFlags: 0
@@ -20251,3 +20303,4 @@ SceneRoots:
   - {fileID: 1017296258}
   - {fileID: 127416794}
   - {fileID: 431237270}
+  - {fileID: 742336943}

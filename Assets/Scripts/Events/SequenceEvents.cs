@@ -14,4 +14,7 @@ public static class SequenceEvents
     public static Action CompleteLevel2;
     public static Action CompleteLevel3;
     public static Action CompleteLevel4;
+
+    // fired once at the moment each of the 5 puzzles is actually solved (used for scoring)
+    public static Action PuzzleSolved;
 }
