@@ -5,7 +5,15 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField]
     private OrbitCamera orbitCamera;
 
+    [Tooltip("Seconds the player ignores further hits after being hurt.")]
+    [SerializeField]
+    private float invincibleDuration = 1f;
+
+    private float invincibleUntil;
+
     public OrbitCamera OrbitCamera => orbitCamera;
+
+    public bool IsInvincible => Time.time < invincibleUntil;
 
     private void Awake()
     {
@@ -15,6 +23,9 @@ public class Player : MonoBehaviour, IDamageable
 
     public void GetDamaged(int amount, GameObject source)
     {
+        if (IsInvincible) return;
+
+        invincibleUntil = Time.time + invincibleDuration;
         GameplayEvents.PlayerHurt?.Invoke();
     }
 }
