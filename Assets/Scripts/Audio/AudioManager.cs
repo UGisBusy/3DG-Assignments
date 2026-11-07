@@ -35,8 +35,14 @@ public class AudioManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)]
     private float sfxVolume = 0.8f;
 
+    [Tooltip("Hit sound has its own volume so it always cuts through the music.")]
+    [SerializeField, Range(0f, 1f)]
+    private float hitVolume = 1f;
+
     private AudioSource musicSource;
     private AudioSource sfxSource;
+    private AudioSource hitSource; // own source: other sounds can't change its pitch or steal its voice
+    private int lastHitFrame = -1;
 
     private void Awake()
     {
@@ -45,6 +51,9 @@ public class AudioManager : MonoBehaviour
         musicSource.mute = !musicEnabled;
 
         sfxSource = CreateSource(loop: false, sfxVolume);
+
+        hitSource = CreateSource(loop: false, hitVolume);
+        hitSource.priority = 0; // highest: never dropped when many sounds play
 
         SequenceEvents.LevelStarted += OnLevelStarted;
         SequenceEvents.Win += OnWin;
@@ -74,6 +83,8 @@ public class AudioManager : MonoBehaviour
         }
         if (sfxSource != null)
             sfxSource.volume = sfxVolume;
+        if (hitSource != null)
+            hitSource.volume = hitVolume;
     }
 
     // turn background music on/off from code (e.g. a settings menu); sound effects are unaffected
@@ -102,8 +113,20 @@ public class AudioManager : MonoBehaviour
         Play(loseClip);
     }
 
-    // small random pitch so repeated hits don't sound identical
-    private void OnTargetHit() => Play(hitClip, Random.Range(0.9f, 1.1f));
+    // every attack that lands on a box, lever or monster plays one hit sound
+    private void OnTargetHit()
+    {
+        if (hitClip == null) return;
+
+        // one swing can hit several targets in the same frame; stacking identical
+        // copies only distorts, so play once per frame
+        if (lastHitFrame == Time.frameCount) return;
+        lastHitFrame = Time.frameCount;
+
+        // small random pitch so repeated hits don't sound identical
+        hitSource.pitch = Random.Range(0.9f, 1.1f);
+        hitSource.PlayOneShot(hitClip);
+    }
 
     private void OnPlayerHurt() => Play(hurtClip);
 

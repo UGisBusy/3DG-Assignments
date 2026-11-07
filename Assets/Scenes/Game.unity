@@ -13043,7 +13043,8 @@ MonoBehaviour:
   pickupClip: {fileID: 8300000, guid: 9f6f1b0cd64348c40932bcfb8460e3fe, type: 3}
   winClip: {fileID: 8300000, guid: 5a842ab8c7ab37045865af531d25d617, type: 3}
   loseClip: {fileID: 8300000, guid: ade5a38aab2dcb541a6dd8c788ca0b7a, type: 3}
-  sfxVolume: 0.5
+  sfxVolume: 1
+  hitVolume: 1
 --- !u!4 &1310052824
 Transform:
   m_ObjectHideFlags: 0
