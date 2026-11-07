@@ -18,9 +18,18 @@ public class Monster : MonoBehaviour, IDamageable
     private int hp = 3;
 
     MonsterTurret turret;
+    MonsterHealthBar healthBar;
+    int maxHp;
 
     private void Awake()
     {
+        maxHp = hp;
+
+        // use the bar on the prefab if there is one (to tweak its settings), otherwise add a default one
+        healthBar = GetComponent<MonsterHealthBar>();
+        if (healthBar == null)
+            healthBar = gameObject.AddComponent<MonsterHealthBar>();
+
         turret = GetComponentInChildren<MonsterTurret>();
         if (turret == null)
             throw new System.NullReferenceException("Monster has no Turret");
@@ -52,7 +61,11 @@ public class Monster : MonoBehaviour, IDamageable
 
     public void GetDamaged(int amount, GameObject source)
     {
+        if (hp <= 0) return; // already dying this frame, don't count the kill twice
+
         hp -= amount;
+        healthBar.SetRatio((float)hp / maxHp);
+
         if (hp <= 0)
             Die();
     }

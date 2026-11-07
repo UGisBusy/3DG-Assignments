@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3849349376192356872}
   - component: {fileID: 7527198249176059286}
+  - component: {fileID: 2449836405811552028}
   - component: {fileID: 1945722273969621991}
   m_Layer: 0
   m_Name: Monster
@@ -50,6 +51,23 @@ MonoBehaviour:
   crystalPrefab: {fileID: 3019771614300038026, guid: 8d1812b7417e12a40a3c6668abced50d, type: 3}
   type: 0
   hp: 3
+--- !u!114 &2449836405811552028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330382745945110511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 359b5beb50ddf004dae52cb9fd458e13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterHealthBar
+  heightOffset: 1.5
+  size: {x: 1.2, y: 0.15}
+  padding: 0.02
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.6}
+  fillColor: {r: 0.85, g: 0.15, b: 0.15, a: 1}
 --- !u!65 &1945722273969621991
 BoxCollider:
   m_ObjectHideFlags: 0

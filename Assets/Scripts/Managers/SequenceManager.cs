@@ -42,6 +42,8 @@ public class SequenceManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);
 
+        LockCursor();
+
         stateMachine = new StateMachine((newState) => currentStateName = newState.Name);
 
         ExitAction = new InputAction(binding: "<Keyboard>/escape");
@@ -68,6 +70,20 @@ public class SequenceManager : MonoBehaviour
 
         ExitAction?.Disable();
         ExitAction?.Dispose();
+    }
+
+    // all menus are keyboard-driven, so the cursor stays hidden and locked for the whole game
+    private static void LockCursor()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    // re-lock after alt-tabbing back into the game
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (hasFocus && instance == this)
+            LockCursor();
     }
 
     private void CountPickup(CollectibleType type)
