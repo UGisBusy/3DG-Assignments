@@ -168,6 +168,8 @@ public class SequenceManager : MonoBehaviour
 
     private void EnterLevel1()
     {
+        // unpause after win/loss; timeScale is global and survives the scene reload
+        Time.timeScale = 1f;
         SceneManager.LoadScene(GAME_SCENE);
     }
 
@@ -239,6 +241,7 @@ public class SequenceManager : MonoBehaviour
 
     private void EnterWin()
     {
+        Time.timeScale = 0f; // freeze monsters, projectiles and the timer
         UIEvents.HideGame?.Invoke();
         UIEvents.ShowWin?.Invoke();
     }
@@ -250,6 +253,7 @@ public class SequenceManager : MonoBehaviour
 
     private void EnterLoss()
     {
+        Time.timeScale = 0f; // freeze monsters, projectiles and the timer
         UIEvents.HideGame?.Invoke();
         UIEvents.ShowLoss?.Invoke();
     }

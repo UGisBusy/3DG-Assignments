@@ -64,6 +64,10 @@ public class MinimapIcon : MonoBehaviour
             return;
         }
 
+        // keep icons out of the main view (done here, since the Minimap UI may still be hidden, e.g. on the intro)
+        if (Camera.main != null)
+            Camera.main.cullingMask &= ~(1 << layer);
+
         var iconObject = new GameObject($"{name} MinimapIcon") { layer = layer };
         icon = iconObject.transform;
         icon.localScale = Vector3.one * size;
