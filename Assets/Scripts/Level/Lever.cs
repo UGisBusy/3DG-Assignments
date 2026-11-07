@@ -30,7 +30,27 @@ public class Lever : MonoBehaviour, IDamageable
     [SerializeField]
     private LeverId id;
 
+    // parts of the lever model (filled in by 3DG > Build Lever Prefab)
+    [Header("Look")]
+    [Tooltip("Pivot at the bottom of the handle; rotated to tilt the handle.")]
+    [SerializeField]
+    private Transform handlePivot;
+
+    [SerializeField]
+    private Renderer knob;
+
+    [SerializeField]
+    private Material offMaterial;
+
+    [SerializeField]
+    private Material onMaterial;
+
+    [Tooltip("How far the handle leans, in degrees.")]
+    [SerializeField]
+    private float tiltAngle = 30f;
+
     private BridgeId code;
+    private bool isOn; // starts off
 
     public void Awake()
     {
@@ -38,6 +58,8 @@ public class Lever : MonoBehaviour, IDamageable
 
         // levers are puzzle switches in levels 4 and 5
         MinimapIcon.Attach(gameObject, MinimapIconShape.Diamond, new Color(1f, 0.55f, 0.1f), size: 2f, sortingOrder: 2);
+
+        ApplyLook();
     }
 
     public void GetDamaged(int amount, GameObject source)
@@ -50,6 +72,21 @@ public class Lever : MonoBehaviour, IDamageable
         if (code == BridgeId.None)
             return;
 
+        // each hit flips the lever, matching its platforms toggling
+        isOn = !isOn;
+        ApplyLook();
+
         GameplayEvents.LeverTriggered?.Invoke(code);
+    }
+
+    // off: handle leans left, red knob. on: handle leans right, green knob.
+    private void ApplyLook()
+    {
+        if (handlePivot != null)
+            handlePivot.localRotation = Quaternion.Euler(0f, 0f, isOn ? -tiltAngle : tiltAngle);
+
+        Material material = isOn ? onMaterial : offMaterial;
+        if (knob != null && material != null)
+            knob.sharedMaterial = material;
     }
 }
